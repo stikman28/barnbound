@@ -28,7 +28,7 @@ function listingCard(l) {
 }
 
 const state = {
-  types: ['Horse', 'Tack', 'Equipment'],
+  types: ['Horse', 'Tack', 'Equipment', 'Trailer', 'Clothing', 'Other'],
   disciplines: [],
   maxPrice: 30000,
   verifiedOnly: false,
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('filter-reset').addEventListener('click', () => {
-    state.types = ['Horse', 'Tack', 'Equipment'];
+    state.types = ['Horse', 'Tack', 'Equipment', 'Trailer', 'Clothing', 'Other'];
     state.disciplines = [];
     state.maxPrice = 30000;
     state.verifiedOnly = false;

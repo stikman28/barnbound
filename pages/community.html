@@ -16,6 +16,7 @@
         <a href="marketplace.html">Marketplace</a>
         <a href="directory.html">Directory</a>
         <a href="community.html" class="active">Community</a>
+        <a href="map.html">Map</a>
         <a href="pricing.html">Pricing</a>
         <a href="about.html">About</a>
       </nav>
@@ -38,12 +39,13 @@
       <button class="tab-btn active" data-tab="events" role="tab">📅 Events</button>
       <button class="tab-btn" data-tab="forums" role="tab">💬 Q&A Forums</button>
       <button class="tab-btn" data-tab="groups" role="tab">👥 Groups</button>
+      <button class="tab-btn" data-tab="mygroups" role="tab">⭐ My Groups</button>
     </div>
 
     <div class="tab-panel active" id="tab-events">
       <div class="split-head">
         <h2 class="section-title" style="margin:0; font-size:1.5rem;">Upcoming Events</h2>
-        <a href="#" class="btn btn-outline">+ Post an Event</a>
+        <button class="btn btn-outline" id="btn-post-event">+ Post an Event</button>
       </div>
       <div class="event-list" id="event-list"></div>
     </div>
@@ -51,7 +53,7 @@
     <div class="tab-panel" id="tab-forums">
       <div class="split-head">
         <h2 class="section-title" style="margin:0; font-size:1.5rem;">Recent Discussions</h2>
-        <a href="#" class="btn btn-outline">+ Start a Thread</a>
+        <button class="btn btn-outline" id="btn-start-thread">+ Start a Thread</button>
       </div>
       <div class="forum-list" id="forum-list"></div>
     </div>
@@ -59,9 +61,106 @@
     <div class="tab-panel" id="tab-groups">
       <div class="split-head">
         <h2 class="section-title" style="margin:0; font-size:1.5rem;">Join a Local Group</h2>
-        <a href="#" class="btn btn-outline">+ Create a Group</a>
+        <button class="btn btn-outline" id="btn-create-group">+ Create a Group</button>
       </div>
       <div class="group-list" id="group-list"></div>
+    </div>
+
+    <div class="tab-panel" id="tab-mygroups">
+      <div class="split-head">
+        <h2 class="section-title" style="margin:0; font-size:1.5rem;">My Groups, Events & Threads</h2>
+        <span class="muted small">Your saved community</span>
+      </div>
+      <div id="my-groups-content"></div>
+    </div>
+  </div>
+
+  <!-- Post Event Modal -->
+  <div class="modal-backdrop hidden" id="modal-event">
+    <div class="modal" role="dialog" aria-labelledby="modal-event-title">
+      <h2 id="modal-event-title">Post an Event</h2>
+      <p class="muted">Share a clinic, show, meet-up, or any equine event.</p>
+      <label class="muted small">Event Title</label>
+      <input type="text" id="event-title" placeholder="e.g. Larimer Barrel Race Fundraiser" class="form-input" />
+      <div class="form-row">
+        <div>
+          <label class="muted small">Month</label>
+          <select id="event-month" class="form-input">
+            <option>Nov</option><option>Dec</option><option>Jan</option><option>Feb</option>
+            <option>Mar</option><option>Apr</option><option>May</option><option>Jun</option>
+            <option>Jul</option><option>Aug</option><option>Sep</option><option>Oct</option>
+          </select>
+        </div>
+        <div>
+          <label class="muted small">Day</label>
+          <input type="number" id="event-day" min="1" max="31" placeholder="15" class="form-input" />
+        </div>
+      </div>
+      <label class="muted small">Details (date, time, location, cost)</label>
+      <input type="text" id="event-meta" placeholder="Sat · 10am · Poudre River Stables · $50" class="form-input" />
+      <label class="muted small">Category</label>
+      <select id="event-category" class="form-input">
+        <option>Clinic</option>
+        <option>Show</option>
+        <option>Community</option>
+        <option>Education</option>
+        <option>Trail Ride</option>
+        <option>Fundraiser</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-close-modal>Cancel</button>
+        <button class="btn btn-primary" id="save-event">Post Event</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Start Thread Modal -->
+  <div class="modal-backdrop hidden" id="modal-thread">
+    <div class="modal" role="dialog" aria-labelledby="modal-thread-title">
+      <h2 id="modal-thread-title">Start a Thread</h2>
+      <p class="muted">Ask a question or start a discussion with the community.</p>
+      <label class="muted small">Title / Question</label>
+      <input type="text" id="thread-title" placeholder="e.g. Anyone know a good saddle fitter in Larimer?" class="form-input" />
+      <label class="muted small">Category</label>
+      <select id="thread-category" class="form-input">
+        <option>Horse Care</option>
+        <option>Transport</option>
+        <option>Health</option>
+        <option>Tack</option>
+        <option>Competition</option>
+        <option>Nutrition</option>
+        <option>Training</option>
+      </select>
+      <label class="muted small">Icon</label>
+      <select id="thread-icon" class="form-input">
+        <option>❓</option><option>🐴</option><option>🩺</option><option>🎠</option>
+        <option>🏆</option><option>🌾</option><option>🤠</option><option>💬</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-close-modal>Cancel</button>
+        <button class="btn btn-primary" id="save-thread">Post Thread</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Group Modal -->
+  <div class="modal-backdrop hidden" id="modal-group">
+    <div class="modal" role="dialog" aria-labelledby="modal-group-title">
+      <h2 id="modal-group-title">Create a Group</h2>
+      <p class="muted">Gather your discipline, region, or interest — invite others to join.</p>
+      <label class="muted small">Group Name</label>
+      <input type="text" id="group-title" placeholder="e.g. Fort Collins Dressage Riders" class="form-input" />
+      <label class="muted small">Brief Description (members count shown as 1 member when you create it)</label>
+      <input type="text" id="group-meta" placeholder="e.g. Local dressage riders meeting monthly" class="form-input" />
+      <label class="muted small">Icon</label>
+      <select id="group-icon" class="form-input">
+        <option>🤠</option><option>🎠</option><option>🏇</option><option>🐎</option>
+        <option>🏃</option><option>🌄</option><option>🏆</option><option>👥</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-close-modal>Cancel</button>
+        <button class="btn btn-primary" id="save-group">Create Group</button>
+      </div>
     </div>
   </div>
 
@@ -76,6 +175,7 @@
         <a href="marketplace.html">Marketplace</a>
         <a href="directory.html">Directory</a>
         <a href="community.html">Community</a>
+        <a href="map.html">Map</a>
       </div>
       <div class="foot-col">
         <h4>Business</h4>
@@ -94,6 +194,7 @@
   </footer>
 
   <script src="../js/data.js"></script>
+  <script src="../js/store.js"></script>
   <script src="../js/community.js"></script>
 </body>
 </html>

@@ -1,26 +1,35 @@
 /* Directory — filter businesses by category, city, rating */
 
+function cardImageContent(b) {
+  if (!b.image) {
+    return `<span style="font-size:5rem">${b.emoji}</span>`;
+  }
+  const ext = b.image.split('.').pop().toLowerCase();
+  const logoLike = ['svg', 'png', 'gif'].includes(ext);
+  const src = '../' + b.image;
+  return `<img src="${src}" alt="${b.name}" loading="lazy" class="${logoLike ? 'contain' : ''}" onerror="this.outerHTML='<span style=\\'font-size:5rem\\'>${b.emoji}</span>'" />`;
+}
+
 function businessCard(b) {
-  const visitLink = b.url
-    ? `<a href="${b.url}" target="_blank" rel="noopener noreferrer" class="link-arrow small">Visit Website ↗</a>`
-    : `<a href="#" class="link-arrow small">View Profile →</a>`;
   return `
-    <article class="card">
-      <div class="card-image" aria-hidden="true">
-        <span style="font-size:5rem">${b.emoji}</span>
-        ${b.verified ? '<span class="badge verified">Verified</span>' : ''}
-      </div>
-      <div class="card-body">
-        <h3>${b.name}</h3>
-        <div class="card-meta">${b.category} · ${b.city}</div>
-        <p class="small muted" style="margin:0 0 0.5rem;">${b.description}</p>
-        <div class="card-tags">${b.tags.map(t => `<span class="chip">${t}</span>`).join('')}</div>
-        <div class="card-footer">
-          <span class="rating">★ ${b.rating.toFixed(1)} <span class="count">(${b.reviews})</span></span>
-          ${visitLink}
+    <a href="business.html?id=${b.id}" class="card-link">
+      <article class="card">
+        <div class="card-image" aria-hidden="true">
+          ${cardImageContent(b)}
+          ${b.verified ? '<span class="badge verified">Verified</span>' : ''}
         </div>
-      </div>
-    </article>
+        <div class="card-body">
+          <h3>${b.name}</h3>
+          <div class="card-meta">${b.category} · ${b.city}</div>
+          <p class="small muted" style="margin:0 0 0.5rem;">${b.description}</p>
+          <div class="card-tags">${b.tags.map(t => `<span class="chip">${t}</span>`).join('')}</div>
+          <div class="card-footer">
+            <span class="rating">★ ${b.rating.toFixed(1)} <span class="count">(${b.reviews})</span></span>
+            <span class="link-arrow small">View Profile →</span>
+          </div>
+        </div>
+      </article>
+    </a>
   `;
 }
 

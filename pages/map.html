@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Map — BarnBound</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo">
+        <img src="../images/logo.png" alt="BarnBound — Connecting the Horse Community in One Place" />
+      </a>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="marketplace.html">Marketplace</a>
+        <a href="directory.html">Directory</a>
+        <a href="community.html">Community</a>
+        <a href="map.html" class="active">Map</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="about.html">About</a>
+      </nav>
+      <div class="header-cta">
+        <a href="#" class="btn btn-ghost">Sign In</a>
+        <a href="#" class="btn btn-primary">Join Free</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>Front Range Map</h1>
+      <p>Visual view of everywhere BarnBound operates. Verified businesses, upcoming events, and trail rides posted by the community. Pin your next ride so others can join.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="map-hero-layout">
+      <aside class="map-sidebar">
+        <h3>Legend</h3>
+        <div class="map-legend">
+          <div class="legend-item"><span class="legend-pin business"></span> Businesses (<span id="count-businesses">0</span>)</div>
+          <div class="legend-item"><span class="legend-pin event"></span> Upcoming events (<span id="count-events">0</span>)</div>
+          <div class="legend-item"><span class="legend-pin trail"></span> Trail rides (<span id="count-trails">0</span>)</div>
+        </div>
+
+        <h3>Show on Map</h3>
+        <div class="filter-group">
+          <label><input type="checkbox" id="toggle-business" checked /> Businesses</label>
+          <label><input type="checkbox" id="toggle-event" checked /> Events</label>
+          <label><input type="checkbox" id="toggle-trail" checked /> Trail Rides</label>
+        </div>
+
+        <h3>Post a Trail Ride</h3>
+        <p class="muted small" style="margin-top:0;">Tell the community where you're riding — they can join you.</p>
+        <button class="btn btn-primary" id="btn-post-trail" style="width:100%;">+ Post Trail Ride</button>
+
+        <h3 id="trail-list-head">Community Trail Rides</h3>
+        <div id="trail-list" class="small"></div>
+      </aside>
+
+      <div id="main-map"></div>
+    </div>
+  </div>
+
+  <!-- Post Trail Ride Modal -->
+  <div class="modal-backdrop hidden" id="modal-trail">
+    <div class="modal" role="dialog" aria-labelledby="modal-trail-title">
+      <h2 id="modal-trail-title">Post a Trail Ride</h2>
+      <p class="muted">Share a ride other BarnBound members can join.</p>
+      <label class="muted small">Ride Title</label>
+      <input type="text" id="trail-title" placeholder="e.g. Lory State Park Sunset Ride" class="form-input" />
+      <label class="muted small">Trailhead / Meeting Point</label>
+      <select id="trail-location" class="form-input">
+        <option data-lat="40.5806" data-lng="-105.1803">Lory State Park — Bellvue</option>
+        <option data-lat="40.5572" data-lng="-105.2911">Horsetooth Mountain Open Space — Fort Collins</option>
+        <option data-lat="40.5775" data-lng="-105.0858">Fossil Creek Reservoir — Fort Collins</option>
+        <option data-lat="40.5344" data-lng="-105.4225">Red Feather Lakes — Roosevelt Nat'l Forest</option>
+        <option data-lat="40.4361" data-lng="-105.2142">Masonville Trails — Larimer County</option>
+        <option data-lat="40.3828" data-lng="-105.5519">Rocky Mountain National Park — Estes Park</option>
+        <option data-lat="40.1672" data-lng="-105.3769">Hall Ranch Open Space — Lyons</option>
+      </select>
+      <div class="form-row">
+        <div>
+          <label class="muted small">Date</label>
+          <input type="date" id="trail-date" class="form-input" />
+        </div>
+        <div>
+          <label class="muted small">Time</label>
+          <input type="time" id="trail-time" class="form-input" />
+        </div>
+      </div>
+      <label class="muted small">Notes (pace, difficulty, bring what)</label>
+      <input type="text" id="trail-notes" placeholder="e.g. Walk/trot pace, intermediate, bring water" class="form-input" />
+      <label class="muted small">Your Name</label>
+      <input type="text" id="trail-author" placeholder="e.g. Jamie from Fort Collins" class="form-input" />
+      <div class="modal-actions">
+        <button class="btn btn-ghost" data-close-modal>Cancel</button>
+        <button class="btn btn-primary" id="save-trail">Post Ride</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="foot-col">
+        <div class="logo"><img src="../images/logo.png" alt="BarnBound" /></div>
+        <p class="muted">Connecting the Horse Community in One Place</p>
+      </div>
+      <div class="foot-col">
+        <h4>Explore</h4>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="directory.html">Directory</a>
+        <a href="community.html">Community</a>
+        <a href="map.html">Map</a>
+      </div>
+      <div class="foot-col">
+        <h4>Business</h4>
+        <a href="pricing.html">Pricing</a>
+        <a href="#">List Your Business</a>
+      </div>
+      <div class="foot-col">
+        <h4>About</h4>
+        <a href="about.html">Our Story</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="container foot-bottom">
+      <small>© 2026 BarnBound, LLC · Prototype · ANEQ 204 Business Plan</small>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/store.js"></script>
+  <script src="../js/map.js"></script>
+</body>
+</html>
