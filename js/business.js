@@ -132,17 +132,17 @@ function render(b) {
           }</div>
         </div>
 
-        <aside>
-          <div class="card" style="padding:1.25rem;">
-            <h3 style="font-family:var(--font-body); font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; color:var(--ink-500); margin:0 0 0.75rem;">Location</h3>
-            <p style="margin:0 0 0.75rem; font-weight:600;">📍 ${b.city}</p>
-            <div id="profile-map" style="height:260px; border-radius:10px; overflow:hidden; border:1px solid var(--border);"></div>
-            <a href="map.html#b${b.id}" class="link-arrow small" style="display:inline-block; margin-top:0.75rem;">See on full map →</a>
+        <aside class="profile-aside">
+          <div class="card profile-side-card">
+            <h3 class="profile-side-title">Location</h3>
+            <p class="profile-side-city">📍 ${b.city}</p>
+            <div id="profile-map" class="profile-map"></div>
+            <a href="map.html#b${b.id}" class="link-arrow small profile-side-link">See on full map →</a>
           </div>
 
-          <div class="card" style="padding:1.25rem; margin-top:1rem;">
-            <h3 style="font-family:var(--font-body); font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; color:var(--ink-500); margin:0 0 0.75rem;">Contact</h3>
-            ${b.url ? `<p style="margin:0 0 0.5rem;"><a href="${b.url}" target="_blank" rel="noopener">${new URL(b.url).hostname.replace('www.','')}</a></p>` : ''}
+          <div class="card profile-side-card">
+            <h3 class="profile-side-title">Contact</h3>
+            ${b.url ? `<p class="profile-side-link-row"><a href="${b.url}" target="_blank" rel="noopener">${new URL(b.url).hostname.replace('www.','')}</a></p>` : ''}
             <p class="muted small" style="margin:0;">Contact details available to BarnBound members.</p>
           </div>
         </aside>
