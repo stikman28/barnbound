@@ -116,13 +116,13 @@ function render(b) {
           <p>${b.description}</p>
 
           <h2 class="profile-section-title" id="reviews" style="margin-top:2.5rem;">Reviews</h2>
-          <div class="review-form card" style="padding:1.5rem; margin-bottom:1.5rem;">
-            <h3 style="font-family:var(--font-body); font-size:1.05rem; font-weight:700; margin:0 0 0.75rem;">Rate this business</h3>
+          <div class="review-form card">
+            <h3>Rate this business</h3>
             <div class="star-picker" id="star-picker" aria-label="Rate 1 to 5 stars">
               ${[1,2,3,4,5].map(n => `<button type="button" data-value="${n}" class="star-btn">☆</button>`).join('')}
             </div>
             <input type="text" id="review-author" placeholder="Your name (optional)" class="form-input" />
-            <textarea id="review-comment" placeholder="Share your experience…" class="form-input" rows="3"></textarea>
+            <textarea id="review-comment" placeholder="Share your experience…" class="form-input" rows="2"></textarea>
             <button type="button" class="btn btn-primary" id="submit-review">Submit Review</button>
           </div>
           <div id="review-list">${
