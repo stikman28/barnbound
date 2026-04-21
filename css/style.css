@@ -133,20 +133,21 @@ p { margin: 0 0 1em; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 72px;
+  min-height: 108px;
+  padding: 0.5rem 0;
   gap: 1.5rem;
 }
 .logo { display: flex; align-items: center; gap: 0.5rem; color: var(--brown-900); font-weight: 700; }
 .logo img {
   display: block;
-  height: 54px;
+  height: 96px;
   width: auto;
 }
 .site-footer .logo img {
-  height: 72px;
+  height: 110px;
   background: var(--cream-50);
-  padding: 6px 10px;
-  border-radius: 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
 }
 .logo-mark { font-size: 1.6rem; }
 .logo-text { font-family: var(--font-heading); font-size: 1.4rem; letter-spacing: 0.5px; }
@@ -510,7 +511,7 @@ p { margin: 0 0 1em; }
   border-radius: var(--radius-lg);
   padding: 1.5rem;
   position: sticky;
-  top: 88px;
+  top: 124px;
   align-self: start;
   box-shadow: var(--shadow-sm);
 }
