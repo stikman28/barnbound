@@ -1,6 +1,6 @@
-# EquiConnect — Prototype Website
+# BarnBound — Prototype Website
 
-A prototype website for EquiConnect, a marketplace and community platform for the equine industry. Based on the ANEQ 204 business plan by Rachel Bird.
+A prototype website for BarnBound, a marketplace and community platform for the equine industry. Based on the ANEQ 204 business plan by Rachel Bird.
 
 > **Mission**: *Connecting the Horse Community in One Place.*
 
@@ -80,4 +80,4 @@ This is a prototype — it demonstrates the concept and user flow, but the butto
 
 ## Credit
 
-Based on the EquiConnect App Business Plan (ANEQ 204) by Rachel Bird.
+Based on the BarnBound App Business Plan (ANEQ 204) by Rachel Bird.

@@ -1,5 +1,5 @@
 /* =========================================================
-   EquiConnect Prototype — Mock Data
+   BarnBound Prototype — Mock Data
    All data is sample data for demo purposes only.
    ========================================================= */
 
@@ -324,7 +324,7 @@ const LISTINGS = [
 const EVENTS = [
   { id: 1, month: "Nov", day: 8, title: "Front Range Ranch Horse Clinic", meta: "Sat · Poudre River Stables · $150", category: "Clinic" },
   { id: 2, month: "Nov", day: 15, title: "Larimer County Saddle Club Show", meta: "Sat · All day · Loveland Fairgrounds", category: "Show" },
-  { id: 3, month: "Nov", day: 22, title: "EquiConnect Meet & Greet — Fort Collins", meta: "Sat · 2pm · NoCo Feed & Tack", category: "Community" },
+  { id: 3, month: "Nov", day: 22, title: "BarnBound Meet & Greet — Fort Collins", meta: "Sat · 2pm · NoCo Feed & Tack", category: "Community" },
   { id: 4, month: "Dec", day: 6, title: "CSU Equine Sciences Open House", meta: "Sat · 10am · CSU Equine Center", category: "Education" },
   { id: 5, month: "Dec", day: 13, title: "Winter Dressage Schooling Show", meta: "Sat · All day · Mountain View Arena", category: "Show" },
   { id: 6, month: "Jan", day: 10, title: "Beginner Barrel Racing Clinic", meta: "Sat · Soukup Stables · $125", category: "Clinic" },

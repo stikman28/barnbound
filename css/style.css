@@ -1,5 +1,5 @@
 /* =========================================================
-   EquiConnect Prototype Styles
+   BarnBound Prototype Styles
    Palette: saddle brown, forest green, cream, warm rust
    ========================================================= */
 
@@ -137,6 +137,17 @@ p { margin: 0 0 1em; }
   gap: 1.5rem;
 }
 .logo { display: flex; align-items: center; gap: 0.5rem; color: var(--brown-900); font-weight: 700; }
+.logo img {
+  display: block;
+  height: 54px;
+  width: auto;
+}
+.site-footer .logo img {
+  height: 72px;
+  background: var(--cream-50);
+  padding: 6px 10px;
+  border-radius: 10px;
+}
 .logo-mark { font-size: 1.6rem; }
 .logo-text { font-family: var(--font-heading); font-size: 1.4rem; letter-spacing: 0.5px; }
 
