@@ -81,6 +81,26 @@ function apply() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Honor ?q=... and ?loc=... from hero search
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q');
+  const loc = params.get('loc');
+  if (q) {
+    state.search = q;
+    const input = document.getElementById('filter-search');
+    if (input) input.value = q;
+  }
+  if (loc) {
+    // Match any configured city whose name starts with the search term (case-insensitive)
+    const normalized = loc.trim().toLowerCase();
+    document.querySelectorAll('#filter-city input').forEach(el => {
+      if (el.value.toLowerCase().includes(normalized.split(',')[0].trim())) {
+        el.checked = true;
+        state.cities.push(el.value);
+      }
+    });
+  }
+
   document.querySelectorAll('#filter-category input').forEach(el => {
     el.addEventListener('change', () => {
       state.category = el.value;

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — BarnBound</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo">
+        <img src="../images/logo.png" alt="BarnBound — Connecting the Horse Community in One Place" />
+      </a>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="../index.html">Home</a>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="directory.html">Directory</a>
+        <a href="community.html">Community</a>
+        <a href="map.html">Map</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="about.html">About</a>
+      </nav>
+      <div class="header-cta"></div>
+    </div>
+  </header>
+
+  <main class="auth-layout">
+    <div class="auth-card">
+      <h1>Welcome back</h1>
+      <p class="muted">Sign in to your BarnBound account.</p>
+
+      <form id="signin-form" class="auth-form" novalidate>
+        <label>
+          Email
+          <input type="email" id="signin-email" required autocomplete="email" placeholder="you@example.com" />
+        </label>
+        <label>
+          Password
+          <input type="password" id="signin-password" required autocomplete="current-password" placeholder="••••••••" />
+        </label>
+
+        <div id="signin-error" class="form-error hidden"></div>
+
+        <button type="submit" class="btn btn-primary auth-submit">Sign In</button>
+      </form>
+
+      <div class="auth-switch">
+        New to BarnBound? <a href="signup.html">Create an account</a>
+      </div>
+
+      <div class="auth-fineprint">
+        <strong>Prototype note:</strong> Accounts are stored only in this browser's localStorage. No real authentication or data transmission is happening.
+      </div>
+    </div>
+
+    <aside class="auth-side">
+      <div class="auth-side-inner">
+        <h2>Connecting the Horse Community in One Place</h2>
+        <ul class="auth-side-list">
+          <li>✓ Browse verified local businesses</li>
+          <li>✓ Join groups & community forums</li>
+          <li>✓ Buy & sell horses, tack, and trailers</li>
+          <li>✓ Find trail rides near you</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="foot-col">
+        <div class="logo"><img src="../images/logo.png" alt="BarnBound" /></div>
+        <p class="muted">Connecting the Horse Community in One Place</p>
+      </div>
+      <div class="foot-col">
+        <h4>Explore</h4>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="directory.html">Directory</a>
+        <a href="community.html">Community</a>
+        <a href="map.html">Map</a>
+      </div>
+      <div class="foot-col">
+        <h4>Business</h4>
+        <a href="pricing.html">Pricing</a>
+        <a href="#">List Your Business</a>
+      </div>
+      <div class="foot-col">
+        <h4>About</h4>
+        <a href="about.html">Our Story</a>
+        <a href="#">Contact</a>
+      </div>
+          <div class="foot-col qr">
+        <img src="../images/qr-barnbound.png" alt="QR code to BarnBound site" />
+        <div class="qr-caption">Scan to visit</div>
+      </div>
+    </div>
+    <div class="container foot-bottom">
+      <small>© 2026 BarnBound, LLC · Prototype · ANEQ 204 Business Plan</small>
+    </div>
+  </footer>
+
+  <script src="../js/store.js"></script>
+  <script src="../js/auth-ui.js"></script>
+  <script>
+    // If already signed in, bounce to home
+    if (Store.currentUser()) { window.location.href = '../index.html'; }
+
+    document.getElementById('signin-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('signin-email').value;
+      const password = document.getElementById('signin-password').value;
+      const err = document.getElementById('signin-error');
+      err.classList.add('hidden');
+      try {
+        Store.signIn(email, password);
+        window.location.href = '../index.html';
+      } catch (ex) {
+        err.textContent = ex.message;
+        err.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

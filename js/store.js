@@ -15,6 +15,8 @@ const Store = {
     reviews: 'bb_reviews',          // { businessId: [{id, rating, comment, date, author, likes}] }
     likes: 'bb_review_likes',        // { reviewKey: true } — reviewKey = `${businessId}:${reviewId}`
     trailRides: 'bb_trail_rides',
+    users: 'bb_users',               // [{ email, passwordHash, name, location, role, joinedAt }]
+    session: 'bb_session',           // { email, name }
   },
 
   read(key, fallback) {
@@ -129,6 +131,68 @@ const Store = {
   hasLiked(businessId, reviewId) {
     const likes = this.read(this.KEYS.likes, {});
     return !!likes[`${businessId}:${reviewId}`];
+  },
+
+  // --- Auth ---
+  // NOTE: This is a prototype. Passwords are NOT securely hashed — a real
+  // build would use a server-side auth provider (Firebase, Auth0, etc).
+  _hash(s) {
+    // tiny deterministic "hash" purely for the prototype (NOT SECURE)
+    let h = 0;
+    for (let i = 0; i < s.length; i++) {
+      h = ((h << 5) - h) + s.charCodeAt(i);
+      h |= 0;
+    }
+    return String(h);
+  },
+
+  users() { return this.read(this.KEYS.users, []); },
+
+  findUser(email) {
+    const e = email.toLowerCase().trim();
+    return this.users().find(u => u.email === e) || null;
+  },
+
+  registerUser({ name, email, password, location, role }) {
+    email = email.toLowerCase().trim();
+    if (this.findUser(email)) throw new Error('An account with that email already exists.');
+    if (!name || !email || !password) throw new Error('Name, email, and password are required.');
+    const user = {
+      email,
+      name: name.trim(),
+      passwordHash: this._hash(password),
+      location: (location || '').trim(),
+      role: role || 'Rider',
+      joinedAt: new Date().toISOString(),
+    };
+    const users = this.users();
+    users.push(user);
+    this.write(this.KEYS.users, users);
+    this.setSession(user);
+    return user;
+  },
+
+  signIn(email, password) {
+    const user = this.findUser(email);
+    if (!user || user.passwordHash !== this._hash(password)) {
+      throw new Error('Email or password is incorrect.');
+    }
+    this.setSession(user);
+    return user;
+  },
+
+  setSession(user) {
+    this.write(this.KEYS.session, { email: user.email, name: user.name, role: user.role });
+  },
+
+  currentUser() {
+    const s = this.read(this.KEYS.session, null);
+    if (!s) return null;
+    return this.findUser(s.email);
+  },
+
+  signOut() {
+    try { localStorage.removeItem(this.KEYS.session); } catch {}
   },
 
   // --- Trail rides (map) ---

@@ -14,6 +14,7 @@
         <img src="images/logo.png" alt="BarnBound — Connecting the Horse Community in One Place" />
       </a>
       <nav class="main-nav" aria-label="Primary">
+        <a href="index.html" class="active">Home</a>
         <a href="pages/marketplace.html">Marketplace</a>
         <a href="pages/directory.html">Directory</a>
         <a href="pages/community.html">Community</a>
@@ -39,11 +40,27 @@
             and everyone who makes the equine world go round. Starting in Fort Collins, built for
             real horse people.
           </p>
-          <form class="hero-search" onsubmit="event.preventDefault(); alert('Prototype search — try the Directory or Marketplace pages to see results.');">
-            <input type="text" placeholder="Search trainers, vets, horses for sale, tack…" aria-label="Search BarnBound" />
-            <input type="text" placeholder="Fort Collins, CO" aria-label="Location" class="loc" />
+          <form class="hero-search" id="hero-search">
+            <input type="text" id="hero-q" placeholder="Search trainers, vets, feed stores, tack…" aria-label="Search BarnBound" />
+            <input type="text" id="hero-loc" placeholder="Fort Collins, CO" aria-label="Location" class="loc" />
             <button type="submit" class="btn btn-primary">Search</button>
           </form>
+          <script>
+            document.addEventListener('DOMContentLoaded', () => {
+              const form = document.getElementById('hero-search');
+              if (!form) return;
+              form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const q = document.getElementById('hero-q').value.trim();
+                const loc = document.getElementById('hero-loc').value.trim();
+                const params = new URLSearchParams();
+                if (q) params.set('q', q);
+                if (loc) params.set('loc', loc);
+                const qs = params.toString();
+                window.location.href = 'pages/directory.html' + (qs ? '?' + qs : '');
+              });
+            });
+          </script>
           <div class="hero-stats">
             <div><strong>30,000+</strong><span>Horses in Weld County</span></div>
             <div><strong>50,000+</strong><span>Horses within 1hr drive</span></div>
@@ -82,7 +99,7 @@
     <section class="section how-it-works">
       <div class="container">
         <h2 class="section-title">How BarnBound Works</h2>
-        <p class="section-sub">A single, identity-verified home for the local horse community — instead of scattered Facebook groups and word-of-mouth.</p>
+        <p class="section-sub">A single, identity-verified home for the local horse community.</p>
         <div class="steps">
           <div class="step">
             <div class="step-num">1</div>
@@ -202,6 +219,10 @@
         <a href="#">Contact</a>
         <a href="#">Terms & Privacy</a>
       </div>
+          <div class="foot-col qr">
+        <img src="images/qr-barnbound.png" alt="QR code to BarnBound site" />
+        <div class="qr-caption">Scan to visit</div>
+      </div>
     </div>
     <div class="container foot-bottom">
       <small>© 2026 BarnBound, LLC · Prototype · ANEQ 204 Business Plan</small>
@@ -209,6 +230,8 @@
   </footer>
 
   <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/auth-ui.js"></script>
   <script src="js/home.js"></script>
 </body>
 </html>
