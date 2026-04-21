@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketplace — EquiConnect</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-mark">🐴</span>
+        <span class="logo-text">EquiConnect</span>
+      </a>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="marketplace.html" class="active">Marketplace</a>
+        <a href="directory.html">Directory</a>
+        <a href="community.html">Community</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="about.html">About</a>
+      </nav>
+      <div class="header-cta">
+        <a href="#" class="btn btn-ghost">Sign In</a>
+        <a href="#" class="btn btn-primary">Join Free</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>Marketplace</h1>
+      <p>Horses, tack, trailers and equipment from identity-verified sellers in your area. Optional escrow on sales over $5,000.</p>
+    </div>
+  </section>
+
+  <div class="container page-layout">
+    <aside class="filters" aria-label="Filters">
+      <h3>Listing Type</h3>
+      <div class="filter-group" id="filter-type">
+        <label><input type="checkbox" value="Horse" checked /> Horses</label>
+        <label><input type="checkbox" value="Tack" checked /> Tack & Saddles</label>
+        <label><input type="checkbox" value="Equipment" checked /> Equipment</label>
+      </div>
+
+      <h3>Discipline</h3>
+      <div class="filter-group" id="filter-discipline">
+        <label><input type="checkbox" value="Western / Ranch" /> Western / Ranch</label>
+        <label><input type="checkbox" value="Hunter/Jumper" /> Hunter/Jumper</label>
+        <label><input type="checkbox" value="Dressage" /> Dressage</label>
+        <label><input type="checkbox" value="Trail" /> Trail</label>
+        <label><input type="checkbox" value="Trail / Lesson" /> Lesson</label>
+      </div>
+
+      <h3>Max Price</h3>
+      <div class="filter-group">
+        <input type="range" id="filter-price" min="500" max="30000" step="500" value="30000" />
+        <div class="price-range-labels">
+          <span>$500</span>
+          <span id="price-display">$30,000</span>
+        </div>
+      </div>
+
+      <h3>Seller</h3>
+      <div class="filter-group">
+        <label><input type="checkbox" id="filter-verified" /> Verified sellers only</label>
+      </div>
+
+      <button class="filter-reset" id="filter-reset">Reset Filters</button>
+    </aside>
+
+    <main>
+      <div class="results-bar">
+        <div class="results-count"><strong id="result-count">0</strong> listings</div>
+        <select class="sort-select" id="sort-select">
+          <option value="featured">Sort: Featured</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+        </select>
+      </div>
+      <div class="card-grid" id="listing-grid"></div>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="foot-col">
+        <div class="logo"><span class="logo-mark">🐴</span><span class="logo-text">EquiConnect</span></div>
+        <p class="muted">Connecting the Horse Community in One Place</p>
+      </div>
+      <div class="foot-col">
+        <h4>Explore</h4>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="directory.html">Directory</a>
+        <a href="community.html">Community</a>
+      </div>
+      <div class="foot-col">
+        <h4>Business</h4>
+        <a href="pricing.html">Pricing</a>
+        <a href="#">List Your Business</a>
+      </div>
+      <div class="foot-col">
+        <h4>About</h4>
+        <a href="about.html">Our Story</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="container foot-bottom">
+      <small>© 2026 EquiConnect, LLC · Prototype · ANEQ 204 Business Plan</small>
+    </div>
+  </footer>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/marketplace.js"></script>
+</body>
+</html>

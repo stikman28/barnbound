@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EquiConnect — Connecting the Horse Community in One Place</title>
+  <meta name="description" content="EquiConnect is a centralized platform connecting horse owners, trainers, veterinarians, feed stores, and equine professionals in Northern Colorado." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">🐴</span>
+        <span class="logo-text">EquiConnect</span>
+      </a>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="pages/marketplace.html">Marketplace</a>
+        <a href="pages/directory.html">Directory</a>
+        <a href="pages/community.html">Community</a>
+        <a href="pages/pricing.html">Pricing</a>
+        <a href="pages/about.html">About</a>
+      </nav>
+      <div class="header-cta">
+        <a href="#" class="btn btn-ghost">Sign In</a>
+        <a href="#" class="btn btn-primary">Join Free</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <span class="eyebrow">Built for the Equine Community</span>
+          <h1>Connecting the Horse Community in One Place</h1>
+          <p class="lede">
+            One trusted platform for horse owners, trainers, veterinarians, farriers, feed stores,
+            and everyone who makes the equine world go round. Starting in Fort Collins, built for
+            real horse people.
+          </p>
+          <form class="hero-search" onsubmit="event.preventDefault(); alert('Prototype search — try the Directory or Marketplace pages to see results.');">
+            <input type="text" placeholder="Search trainers, vets, horses for sale, tack…" aria-label="Search EquiConnect" />
+            <input type="text" placeholder="Fort Collins, CO" aria-label="Location" class="loc" />
+            <button type="submit" class="btn btn-primary">Search</button>
+          </form>
+          <div class="hero-stats">
+            <div><strong>30,000+</strong><span>Horses in Weld County</span></div>
+            <div><strong>50,000+</strong><span>Horses within 1hr drive</span></div>
+            <div><strong>$1.6B</strong><span>Colorado equine economy</span></div>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="hero-card card-1">
+            <div class="avatar">🐎</div>
+            <div>
+              <strong>Poudre River Stables</strong>
+              <span class="muted">Boarding · Fort Collins</span>
+              <span class="stars">★★★★★ <small>(48)</small></span>
+            </div>
+          </div>
+          <div class="hero-card card-2">
+            <div class="avatar">🩺</div>
+            <div>
+              <strong>Dr. Mitchell, DVM</strong>
+              <span class="muted">Equine Vet · Larimer County</span>
+              <span class="stars">★★★★★ <small>(32)</small></span>
+            </div>
+          </div>
+          <div class="hero-card card-3">
+            <div class="avatar">🐴</div>
+            <div>
+              <strong>Quarter Horse Gelding, 8yr</strong>
+              <span class="muted">$12,500 · Verified Seller</span>
+              <span class="tag">For Sale</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section how-it-works">
+      <div class="container">
+        <h2 class="section-title">How EquiConnect Works</h2>
+        <p class="section-sub">A single, identity-verified home for the local horse community — instead of scattered Facebook groups and word-of-mouth.</p>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <h3>Discover Local Services</h3>
+            <p>Search trainers, vets, farriers, boarding facilities, feed stores and tack shops — filtered by location, discipline and ratings.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <h3>Connect with Confidence</h3>
+            <p>Every business is verified. Message directly in-app, read real reviews, and join community groups for your discipline.</p>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <h3>Buy, Sell & Grow</h3>
+            <p>Shop the marketplace for horses and tack from identity-verified sellers. Optional escrow on sales over $5,000.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt-bg">
+      <div class="container">
+        <div class="split-head">
+          <h2 class="section-title">Featured Businesses</h2>
+          <a href="pages/directory.html" class="link-arrow">Browse the full directory →</a>
+        </div>
+        <div class="card-grid" id="featured-businesses"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="split-head">
+          <h2 class="section-title">Featured on the Marketplace</h2>
+          <a href="pages/marketplace.html" class="link-arrow">Shop all listings →</a>
+        </div>
+        <div class="card-grid" id="featured-listings"></div>
+      </div>
+    </section>
+
+    <section class="section audiences">
+      <div class="container">
+        <h2 class="section-title">Built For Everyone in the Barn</h2>
+        <div class="audience-grid">
+          <div class="audience">
+            <h3>🏇 Horse Owners</h3>
+            <ul>
+              <li>Find trusted local services</li>
+              <li>Join discipline-specific groups</li>
+              <li>Shop horses, tack & equipment</li>
+              <li>Plan and find events</li>
+            </ul>
+          </div>
+          <div class="audience">
+            <h3>🏢 Businesses</h3>
+            <ul>
+              <li>Verified business profile</li>
+              <li>Reviews, photos & analytics</li>
+              <li>Featured listings & ads</li>
+              <li>Content & marketing services</li>
+            </ul>
+          </div>
+          <div class="audience">
+            <h3>🎓 Students & Pros</h3>
+            <ul>
+              <li>CSU Equine Sciences community</li>
+              <li>Mentorship & Q&A forums</li>
+              <li>Event calendar & clinics</li>
+              <li>Networking with pros</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-banner">
+      <div class="container cta-inner">
+        <div>
+          <h2>Join the Horse Community, the Way It Should Be</h2>
+          <p>Free to browse. Free to join. Professional tools when you need them.</p>
+        </div>
+        <div class="cta-actions">
+          <a href="pages/pricing.html" class="btn btn-light">See Pricing</a>
+          <a href="#" class="btn btn-primary">Get Started</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="foot-col">
+        <div class="logo">
+          <span class="logo-mark">🐴</span>
+          <span class="logo-text">EquiConnect</span>
+        </div>
+        <p class="muted">Connecting the Horse Community in One Place</p>
+        <p class="muted small">Fort Collins, Colorado · Rachel Bird, Owner</p>
+      </div>
+      <div class="foot-col">
+        <h4>Explore</h4>
+        <a href="pages/marketplace.html">Marketplace</a>
+        <a href="pages/directory.html">Directory</a>
+        <a href="pages/community.html">Community</a>
+      </div>
+      <div class="foot-col">
+        <h4>Business</h4>
+        <a href="pages/pricing.html">Pricing</a>
+        <a href="#">List Your Business</a>
+        <a href="#">Advertising</a>
+      </div>
+      <div class="foot-col">
+        <h4>About</h4>
+        <a href="pages/about.html">Our Story</a>
+        <a href="#">Contact</a>
+        <a href="#">Terms & Privacy</a>
+      </div>
+    </div>
+    <div class="container foot-bottom">
+      <small>© 2026 EquiConnect, LLC · Prototype · ANEQ 204 Business Plan</small>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Community — EquiConnect</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-mark">🐴</span>
+        <span class="logo-text">EquiConnect</span>
+      </a>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="marketplace.html">Marketplace</a>
+        <a href="directory.html">Directory</a>
+        <a href="community.html" class="active">Community</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="about.html">About</a>
+      </nav>
+      <div class="header-cta">
+        <a href="#" class="btn btn-ghost">Sign In</a>
+        <a href="#" class="btn btn-primary">Join Free</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>Community</h1>
+      <p>Join local discussion groups, plan and find events, and ask questions in Q&A forums — all with real, verified horse people in your area.</p>
+    </div>
+  </section>
+
+  <div class="container" style="padding: 1rem 0 4rem;">
+    <div class="community-tabs" role="tablist">
+      <button class="tab-btn active" data-tab="events" role="tab">📅 Events</button>
+      <button class="tab-btn" data-tab="forums" role="tab">💬 Q&A Forums</button>
+      <button class="tab-btn" data-tab="groups" role="tab">👥 Groups</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-events">
+      <div class="split-head">
+        <h2 class="section-title" style="margin:0; font-size:1.5rem;">Upcoming Events</h2>
+        <a href="#" class="btn btn-outline">+ Post an Event</a>
+      </div>
+      <div class="event-list" id="event-list"></div>
+    </div>
+
+    <div class="tab-panel" id="tab-forums">
+      <div class="split-head">
+        <h2 class="section-title" style="margin:0; font-size:1.5rem;">Recent Discussions</h2>
+        <a href="#" class="btn btn-outline">+ Start a Thread</a>
+      </div>
+      <div class="forum-list" id="forum-list"></div>
+    </div>
+
+    <div class="tab-panel" id="tab-groups">
+      <div class="split-head">
+        <h2 class="section-title" style="margin:0; font-size:1.5rem;">Join a Local Group</h2>
+        <a href="#" class="btn btn-outline">+ Create a Group</a>
+      </div>
+      <div class="group-list" id="group-list"></div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="foot-col">
+        <div class="logo"><span class="logo-mark">🐴</span><span class="logo-text">EquiConnect</span></div>
+        <p class="muted">Connecting the Horse Community in One Place</p>
+      </div>
+      <div class="foot-col">
+        <h4>Explore</h4>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="directory.html">Directory</a>
+        <a href="community.html">Community</a>
+      </div>
+      <div class="foot-col">
+        <h4>Business</h4>
+        <a href="pricing.html">Pricing</a>
+        <a href="#">List Your Business</a>
+      </div>
+      <div class="foot-col">
+        <h4>About</h4>
+        <a href="about.html">Our Story</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="container foot-bottom">
+      <small>© 2026 EquiConnect, LLC · Prototype · ANEQ 204 Business Plan</small>
+    </div>
+  </footer>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/community.js"></script>
+</body>
+</html>

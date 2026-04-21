@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Directory — EquiConnect</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-mark">🐴</span>
+        <span class="logo-text">EquiConnect</span>
+      </a>
+      <nav class="main-nav" aria-label="Primary">
+        <a href="marketplace.html">Marketplace</a>
+        <a href="directory.html" class="active">Directory</a>
+        <a href="community.html">Community</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="about.html">About</a>
+      </nav>
+      <div class="header-cta">
+        <a href="#" class="btn btn-ghost">Sign In</a>
+        <a href="#" class="btn btn-primary">Join Free</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>Equine Business Directory</h1>
+      <p>Verified local trainers, veterinarians, farriers, feed stores, tack shops, haulers, photographers, and more. Every business is identity-verified by EquiConnect.</p>
+    </div>
+  </section>
+
+  <div class="container page-layout">
+    <aside class="filters" aria-label="Filters">
+      <h3>Search</h3>
+      <div class="filter-group">
+        <input type="text" id="filter-search" placeholder="Search by name or tag…"
+          style="padding:0.55rem 0.75rem; border:1px solid var(--border); border-radius:6px; font-family:inherit; font-size:0.9rem;" />
+      </div>
+
+      <h3>Category</h3>
+      <div class="filter-group" id="filter-category">
+        <label><input type="radio" name="cat" value="All" checked /> All</label>
+        <label><input type="radio" name="cat" value="Boarding" /> Boarding</label>
+        <label><input type="radio" name="cat" value="Training" /> Training</label>
+        <label><input type="radio" name="cat" value="Veterinary" /> Veterinary</label>
+        <label><input type="radio" name="cat" value="Farrier" /> Farrier</label>
+        <label><input type="radio" name="cat" value="Feed & Tack" /> Feed & Tack</label>
+        <label><input type="radio" name="cat" value="Hauler" /> Hauler</label>
+        <label><input type="radio" name="cat" value="Photographer" /> Photographer</label>
+        <label><input type="radio" name="cat" value="Service Providers" /> Other Services</label>
+      </div>
+
+      <h3>Location</h3>
+      <div class="filter-group" id="filter-city">
+        <label><input type="checkbox" value="Fort Collins, CO" /> Fort Collins</label>
+        <label><input type="checkbox" value="Loveland, CO" /> Loveland</label>
+        <label><input type="checkbox" value="Greeley, CO" /> Greeley</label>
+        <label><input type="checkbox" value="Longmont, CO" /> Longmont</label>
+        <label><input type="checkbox" value="Windsor, CO" /> Windsor</label>
+        <label><input type="checkbox" value="Wellington, CO" /> Wellington</label>
+        <label><input type="checkbox" value="Berthoud, CO" /> Berthoud</label>
+        <label><input type="checkbox" value="Severance, CO" /> Severance</label>
+      </div>
+
+      <h3>Minimum Rating</h3>
+      <div class="filter-group" id="filter-rating">
+        <label><input type="radio" name="rating" value="0" checked /> Any rating</label>
+        <label><input type="radio" name="rating" value="4.5" /> 4.5★ and up</label>
+        <label><input type="radio" name="rating" value="4.8" /> 4.8★ and up</label>
+      </div>
+
+      <button class="filter-reset" id="filter-reset">Reset Filters</button>
+    </aside>
+
+    <main>
+      <div class="results-bar">
+        <div class="results-count"><strong id="result-count">0</strong> businesses</div>
+        <select class="sort-select" id="sort-select">
+          <option value="featured">Sort: Featured</option>
+          <option value="rating">Top Rated</option>
+          <option value="name">Name (A-Z)</option>
+        </select>
+      </div>
+      <div class="card-grid" id="business-grid"></div>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="foot-col">
+        <div class="logo"><span class="logo-mark">🐴</span><span class="logo-text">EquiConnect</span></div>
+        <p class="muted">Connecting the Horse Community in One Place</p>
+      </div>
+      <div class="foot-col">
+        <h4>Explore</h4>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="directory.html">Directory</a>
+        <a href="community.html">Community</a>
+      </div>
+      <div class="foot-col">
+        <h4>Business</h4>
+        <a href="pricing.html">Pricing</a>
+        <a href="#">List Your Business</a>
+      </div>
+      <div class="foot-col">
+        <h4>About</h4>
+        <a href="about.html">Our Story</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="container foot-bottom">
+      <small>© 2026 EquiConnect, LLC · Prototype · ANEQ 204 Business Plan</small>
+    </div>
+  </footer>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/directory.js"></script>
+</body>
+</html>
