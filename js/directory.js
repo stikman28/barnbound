@@ -1,6 +1,9 @@
 /* Directory — filter businesses by category, city, rating */
 
 function businessCard(b) {
+  const visitLink = b.url
+    ? `<a href="${b.url}" target="_blank" rel="noopener noreferrer" class="link-arrow small">Visit Website ↗</a>`
+    : `<a href="#" class="link-arrow small">View Profile →</a>`;
   return `
     <article class="card">
       <div class="card-image" aria-hidden="true">
@@ -14,7 +17,7 @@ function businessCard(b) {
         <div class="card-tags">${b.tags.map(t => `<span class="chip">${t}</span>`).join('')}</div>
         <div class="card-footer">
           <span class="rating">★ ${b.rating.toFixed(1)} <span class="count">(${b.reviews})</span></span>
-          <a href="#" class="link-arrow small">View Profile →</a>
+          ${visitLink}
         </div>
       </div>
     </article>
