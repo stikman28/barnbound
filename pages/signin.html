@@ -103,8 +103,22 @@
   <script src="../js/store.js"></script>
   <script src="../js/auth-ui.js"></script>
   <script>
-    // If already signed in, bounce to home
-    if (Store.currentUser()) { window.location.href = '../index.html'; }
+    // Where to go after sign-in: honor a same-origin ?next= path, else home.
+    function nextDest() {
+      const n = new URLSearchParams(location.search).get('next');
+      return (n && n.startsWith('/')) ? n : '../index.html';
+    }
+    // Carry ?next= over to the "Create an account" link so gating survives the switch.
+    (function () {
+      const n = new URLSearchParams(location.search).get('next');
+      if (n) {
+        const link = document.querySelector('.auth-switch a');
+        if (link) link.href = 'signup.html?next=' + encodeURIComponent(n);
+      }
+    })();
+
+    // If already signed in, bounce onward
+    if (Store.currentUser()) { window.location.href = nextDest(); }
 
     document.getElementById('signin-form').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -114,7 +128,7 @@
       err.classList.add('hidden');
       try {
         Store.signIn(email, password);
-        window.location.href = '../index.html';
+        window.location.href = nextDest();
       } catch (ex) {
         err.textContent = ex.message;
         err.classList.remove('hidden');

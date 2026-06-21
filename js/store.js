@@ -17,6 +17,10 @@ const Store = {
     trailRides: 'bb_trail_rides',
     users: 'bb_users',               // [{ email, passwordHash, name, location, role, joinedAt }]
     session: 'bb_session',           // { email, name }
+    listings: 'bb_user_listings',    // [{ id, type, title, price, city, description, ... seller, sellerEmail }]
+    favorites: 'bb_favorites',       // [listingId, ...]
+    orders: 'bb_orders',             // [{ id, listingId, title, price, offer, message, status, buyerEmail, date }]
+    inquiries: 'bb_inquiries',       // [{ id, listingId, title, message, buyerEmail, date }]
   },
 
   read(key, fallback) {
@@ -206,5 +210,80 @@ const Store = {
   },
   removeTrailRide(id) {
     this.write(this.KEYS.trailRides, this.trailRides().filter(r => r.id !== id));
+  },
+
+  // --- Marketplace: user listings ---
+  userListings() { return this.read(this.KEYS.listings, []); },
+  addListing(listing) {
+    const listings = this.userListings();
+    const user = this.currentUser();
+    listing.id = 'L' + Date.now();
+    listing.userCreated = true;
+    listing.seller = user ? user.name : 'BarnBound Member';
+    listing.sellerEmail = user ? user.email : null;
+    listing.verified = !!user;       // a signed-in member counts as a verified seller in the prototype
+    listing.featured = false;
+    listing.date = new Date().toISOString();
+    listings.unshift(listing);
+    this.write(this.KEYS.listings, listings);
+    return listing;
+  },
+  removeListing(id) {
+    this.write(this.KEYS.listings, this.userListings().filter(l => l.id !== id));
+  },
+  // Listings created by the signed-in user
+  myListings() {
+    const user = this.currentUser();
+    if (!user) return [];
+    return this.userListings().filter(l => l.sellerEmail === user.email);
+  },
+
+  // --- Marketplace: favorites / watchlist ---
+  favorites() { return this.read(this.KEYS.favorites, []); },
+  isFavorite(id) { return this.favorites().some(x => String(x) === String(id)); },
+  toggleFavorite(id) {
+    id = String(id);
+    let favs = this.favorites().map(String);
+    if (favs.includes(id)) favs = favs.filter(x => x !== id);
+    else favs.unshift(id);
+    this.write(this.KEYS.favorites, favs);
+    return favs.includes(id);
+  },
+
+  // --- Marketplace: orders / offers ---
+  orders() { return this.read(this.KEYS.orders, []); },
+  addOrder(order) {
+    const orders = this.orders();
+    const user = this.currentUser();
+    order.id = 'O' + Date.now();
+    order.status = order.status || 'Requested';
+    order.buyerEmail = user ? user.email : null;
+    order.date = new Date().toISOString();
+    orders.unshift(order);
+    this.write(this.KEYS.orders, orders);
+    return order;
+  },
+  myOrders() {
+    const user = this.currentUser();
+    if (!user) return [];
+    return this.orders().filter(o => o.buyerEmail === user.email);
+  },
+
+  // --- Marketplace: seller inquiries (messages) ---
+  inquiries() { return this.read(this.KEYS.inquiries, []); },
+  addInquiry(inquiry) {
+    const list = this.inquiries();
+    const user = this.currentUser();
+    inquiry.id = 'I' + Date.now();
+    inquiry.buyerEmail = user ? user.email : null;
+    inquiry.date = new Date().toISOString();
+    list.unshift(inquiry);
+    this.write(this.KEYS.inquiries, list);
+    return inquiry;
+  },
+  myInquiries() {
+    const user = this.currentUser();
+    if (!user) return [];
+    return this.inquiries().filter(i => i.buyerEmail === user.email);
   },
 };

@@ -32,6 +32,8 @@
               <span class="chip">${user.role || 'Rider'}</span>
               ${user.location ? `<span class="chip">📍 ${user.location}</span>` : ''}
             </div>
+            <a href="${pathPrefix}pages/account.html" class="user-dropdown-item">My Dashboard</a>
+            <a href="${pathPrefix}pages/marketplace.html" class="user-dropdown-item">Buy &amp; Sell</a>
             <a href="${pathPrefix}pages/community.html" class="user-dropdown-item">My Groups</a>
             <button type="button" class="user-dropdown-item danger" id="sign-out-btn">Sign Out</button>
           </div>

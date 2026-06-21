@@ -130,7 +130,22 @@
   <script src="../js/store.js"></script>
   <script src="../js/auth-ui.js"></script>
   <script>
-    if (Store.currentUser()) { window.location.href = '../index.html'; }
+    // Where to go after signing up: honor a same-origin ?next= path, else home.
+    function nextDest(fallback) {
+      const n = new URLSearchParams(location.search).get('next');
+      if (n && n.startsWith('/')) return n + (n.includes('?') ? '&' : '?') + 'welcome=1';
+      return fallback;
+    }
+    // Carry ?next= over to the "Sign in instead" link.
+    (function () {
+      const n = new URLSearchParams(location.search).get('next');
+      if (n) {
+        const link = document.querySelector('.auth-switch a');
+        if (link) link.href = 'signin.html?next=' + encodeURIComponent(n);
+      }
+    })();
+
+    if (Store.currentUser()) { window.location.href = nextDest('../index.html'); }
 
     document.getElementById('signup-form').addEventListener('submit', (e) => {
       e.preventDefault();
@@ -155,8 +170,8 @@
       }
       try {
         Store.registerUser({ name, email, password, location, role });
-        // Take them home so they see the logged-in header
-        window.location.href = '../index.html?welcome=1';
+        // Return to the gated action if there was one, else home with a welcome flag
+        window.location.href = nextDest('../index.html?welcome=1');
       } catch (ex) {
         err.textContent = ex.message;
         err.classList.remove('hidden');
