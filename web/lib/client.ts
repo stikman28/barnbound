@@ -18,6 +18,15 @@ export function apiPost<T = unknown>(url: string, body?: unknown): Promise<T> {
   }).then((r) => handle<T>(r));
 }
 
+export function apiPatch<T = unknown>(url: string, body?: unknown): Promise<T> {
+  return fetch(url, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
+    body: body ? JSON.stringify(body) : undefined,
+  }).then((r) => handle<T>(r));
+}
+
 export function apiDelete<T = unknown>(url: string): Promise<T> {
   return fetch(url, { method: "DELETE", credentials: "same-origin" }).then((r) => handle<T>(r));
 }

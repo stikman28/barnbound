@@ -4,12 +4,18 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUser } from "@/components/user-context";
-import { apiGet, apiPost, apiDelete, priceLabel } from "@/lib/client";
+import { apiGet, apiPost, apiPatch, apiDelete, priceLabel } from "@/lib/client";
 
 type Listing = { id: string; type: string; title: string; price: number; city: string; emoji: string; breed: string | null; discipline: string | null; age: number | null; category: string | null; verified: boolean; featured: boolean; seller: string | null };
 type Order = { id: string; title: string; offer: number; price?: number; message: string | null; status: string; createdAt: string };
 type Inquiry = { id: string; title: string; message: string; createdAt: string };
-type Dash = { listings: Listing[]; orders: Order[]; favorites: Listing[]; inquiries: Inquiry[] };
+type Buyer = { name: string; email: string } | null;
+type ReceivedOrder = { id: string; title: string; offer: number; message: string | null; status: string; createdAt: string; buyer: Buyer };
+type ReceivedInquiry = { id: string; title: string; message: string; createdAt: string; buyer: Buyer };
+type Dash = {
+  listings: Listing[]; orders: Order[]; favorites: Listing[]; inquiries: Inquiry[];
+  receivedOffers: ReceivedOrder[]; receivedInquiries: ReceivedInquiry[];
+};
 
 function fmtDate(iso: string) {
   try { return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }); }
@@ -22,9 +28,11 @@ function metaLine(l: Listing) {
 
 const TABS = [
   { key: "listings", label: "My Listings" },
+  { key: "received-offers", label: "Offers Received" },
+  { key: "received-messages", label: "Inquiries" },
   { key: "offers", label: "My Offers" },
   { key: "saved", label: "Saved" },
-  { key: "messages", label: "Messages" },
+  { key: "messages", label: "My Messages" },
 ];
 
 export default function DashboardPage() {
@@ -60,13 +68,22 @@ export default function DashboardPage() {
     await apiPost("/api/favorites", { listingId: id }).catch(() => {});
     load();
   }
+  async function respondToOffer(id: string, status: "ACCEPTED" | "DECLINED") {
+    await apiPatch(`/api/orders/${id}`, { status }).catch((e) => showToast((e as Error).message));
+    load();
+  }
 
   if (!data) {
     return <section className="page-hero"><div className="container"><h1>My Dashboard</h1><p>Loading…</p></div></section>;
   }
 
   const counts: Record<string, number> = {
-    listings: data.listings.length, offers: data.orders.length, saved: data.favorites.length, messages: data.inquiries.length,
+    listings: data.listings.length,
+    "received-offers": data.receivedOffers.length,
+    "received-messages": data.receivedInquiries.length,
+    offers: data.orders.length,
+    saved: data.favorites.length,
+    messages: data.inquiries.length,
   };
 
   return (
@@ -113,6 +130,59 @@ export default function DashboardPage() {
                       </div>
                     </div>
                   </article>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {tab === "received-offers" && (
+          <section>
+            <h2>Offers Received on Your Listings</h2>
+            {data.receivedOffers.length === 0 ? (
+              <Empty emoji="📥" title="No offers yet" body="When a buyer makes an offer on one of your listings, it shows up here to accept or decline." />
+            ) : (
+              <div className="dash-list">
+                {data.receivedOffers.map((o) => (
+                  <div className="dash-row" key={o.id}>
+                    <div className="dash-row-main">
+                      <strong>{o.title}</strong>
+                      <div className="meta muted small">{o.buyer?.name ?? "A buyer"} offered {priceLabel(o.offer)} · {fmtDate(o.createdAt)}</div>
+                      {o.message ? <div className="dash-row-note">“{o.message}”</div> : null}
+                      {o.buyer ? <div className="muted small">Contact: {o.buyer.email}</div> : null}
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", alignItems: "flex-end" }}>
+                      <span className="status-pill">{o.status}</span>
+                      {o.status === "REQUESTED" && (
+                        <div style={{ display: "flex", gap: "0.4rem" }}>
+                          <button className="btn btn-primary btn-sm" onClick={() => respondToOffer(o.id, "ACCEPTED")}>Accept</button>
+                          <button className="btn btn-ghost btn-sm" onClick={() => respondToOffer(o.id, "DECLINED")}>Decline</button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {tab === "received-messages" && (
+          <section>
+            <h2>Buyer Inquiries on Your Listings</h2>
+            {data.receivedInquiries.length === 0 ? (
+              <Empty emoji="📨" title="No inquiries yet" body="When a buyer contacts you about one of your listings, their message shows up here." />
+            ) : (
+              <div className="dash-list">
+                {data.receivedInquiries.map((m) => (
+                  <div className="dash-row" key={m.id}>
+                    <div className="dash-row-main">
+                      <strong>Re: {m.title}</strong>
+                      <div className="dash-row-note">“{m.message}”</div>
+                      <div className="meta muted small">From {m.buyer?.name ?? "a buyer"}{m.buyer ? ` · ${m.buyer.email}` : ""} · {fmtDate(m.createdAt)}</div>
+                    </div>
+                    <span className="status-pill">New</span>
+                  </div>
                 ))}
               </div>
             )}

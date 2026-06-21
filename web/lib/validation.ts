@@ -42,3 +42,9 @@ export const inquirySchema = z.object({
 export const favoriteSchema = z.object({
   listingId: z.string().min(1),
 });
+
+export const ORDER_STATUSES = ["ACCEPTED", "DECLINED", "COMPLETED", "CANCELLED"] as const;
+
+export const orderStatusSchema = z.object({
+  status: z.enum(ORDER_STATUSES),
+});

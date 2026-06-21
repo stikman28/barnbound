@@ -65,3 +65,34 @@ export function inquiryDTO(i: Inquiry & { listing?: Pick<Listing, "title"> | nul
     createdAt: i.createdAt,
   };
 }
+
+type Buyer = Pick<User, "name" | "email"> | null;
+
+// Seller-side views: include who the buyer is.
+export function receivedOrderDTO(
+  o: Order & { listing?: Pick<Listing, "title"> | null; buyer?: Buyer },
+) {
+  return {
+    id: o.id,
+    listingId: o.listingId,
+    title: o.listing?.title ?? "(listing removed)",
+    offer: o.offerCents / 100,
+    message: o.message,
+    status: o.status,
+    createdAt: o.createdAt,
+    buyer: o.buyer ? { name: o.buyer.name, email: o.buyer.email } : null,
+  };
+}
+
+export function receivedInquiryDTO(
+  i: Inquiry & { listing?: Pick<Listing, "title"> | null; buyer?: Buyer },
+) {
+  return {
+    id: i.id,
+    listingId: i.listingId,
+    title: i.listing?.title ?? "(listing removed)",
+    message: i.message,
+    createdAt: i.createdAt,
+    buyer: i.buyer ? { name: i.buyer.name, email: i.buyer.email } : null,
+  };
+}
