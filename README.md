@@ -4,6 +4,49 @@ A prototype website for BarnBound, a marketplace and community platform for the 
 
 > **Mission**: *Connecting the Horse Community in One Place.*
 
+## Two builds in this repo
+
+1. **Full-stack app — `web/`** (the production direction): Next.js 16 + PostgreSQL + Prisma, containerized with Docker. Real accounts, a shared database, and a working buy/sell/offer/contact marketplace. **Start here.**
+2. **Static prototype — repo root** (`index.html`, `pages/`, `js/`): the original localStorage demo, kept for reference and the GitHub Pages link.
+
+## Run the full-stack app (Docker)
+
+Requires Docker Desktop. From the repo root:
+
+```bash
+docker compose up --build
+```
+
+- App: <http://localhost:3001>
+- Postgres: localhost:5433 (inside Docker: `db:5432`)
+- Health check: <http://localhost:3001/api/health>
+
+First run, in another terminal, seed the database (11 partners + 20 listings + 3 demo sellers):
+
+```bash
+docker compose exec web npm run seed
+```
+
+**Demo accounts** (password `password123`): `sage@barnbound.test`, `cody@barnbound.test`, `dana@barnbound.test` — or just sign up.
+
+### Full-stack architecture
+
+```
+Browser ──HTTP/JSON──▶ Next.js (web, :3001) ──SQL via Prisma──▶ PostgreSQL (db, :5433)
+                       App Router + React UI
+                       Route handlers = the API
+                       bcrypt + signed cookie sessions
+```
+
+- `web/prisma/schema.prisma` — User, Business, Listing, Order, Inquiry, Favorite (money stored as integer cents)
+- `web/app/api/*` — REST route handlers (auth, listings, orders, inquiries, favorites, businesses, dashboard)
+- `web/lib/*` — Prisma client, auth/session, validation (zod), serializers
+- `web/app/*` — pages (home, marketplace, directory, community, map, pricing, about, signin, signup, dashboard)
+
+---
+
+## Static prototype (legacy)
+
 ## What's in the Prototype
 
 | Page | File | What It Shows |
