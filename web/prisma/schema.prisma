@@ -1,0 +1,146 @@
+// BarnBound — Prisma schema (PostgreSQL)
+// Money is stored as integer cents (priceCents / offerCents) to avoid float errors.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  RIDER
+  TRAINER
+  BARN_OWNER
+  MERCHANT
+}
+
+enum ListingType {
+  HORSE
+  TACK
+  EQUIPMENT
+  TRAILER
+  CLOTHING
+  OTHER
+}
+
+enum ListingStatus {
+  ACTIVE
+  SOLD
+  REMOVED
+}
+
+enum OrderStatus {
+  REQUESTED
+  ACCEPTED
+  DECLINED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String
+  passwordHash String
+  location     String?
+  role         Role       @default(RIDER)
+  createdAt    DateTime   @default(now())
+
+  listings     Listing[]
+  orders       Order[]
+  inquiries    Inquiry[]
+  favorites    Favorite[]
+}
+
+model Business {
+  id           Int      @id @default(autoincrement())
+  name         String
+  url          String?
+  category     String
+  city         String
+  lat          Float?
+  lng          Float?
+  image        String?
+  emoji        String?
+  rating       Float    @default(0)
+  reviewsCount Int      @default(0)
+  tags         String[]
+  verified     Boolean  @default(false)
+  featured     Boolean  @default(false)
+  description  String
+  createdAt    DateTime @default(now())
+}
+
+model Listing {
+  id          String        @id @default(cuid())
+  type        ListingType
+  title       String
+  priceCents  Int
+  city        String
+  description String        @default("")
+  emoji       String        @default("📦")
+  breed       String?
+  discipline  String?
+  age         Int?
+  category    String?
+  verified    Boolean       @default(false)
+  featured    Boolean       @default(false)
+  status      ListingStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+
+  seller      User          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  sellerId    String
+
+  orders      Order[]
+  inquiries   Inquiry[]
+  favorites   Favorite[]
+
+  @@index([type])
+  @@index([sellerId])
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  offerCents Int
+  message    String?
+  status     OrderStatus @default(REQUESTED)
+  createdAt  DateTime    @default(now())
+
+  listing    Listing     @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId  String
+  buyer      User        @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  buyerId    String
+
+  @@index([buyerId])
+  @@index([listingId])
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  message   String
+  createdAt DateTime @default(now())
+
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId String
+  buyer     User     @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  buyerId   String
+
+  @@index([buyerId])
+  @@index([listingId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  @@unique([userId, listingId])
+  @@index([userId])
+}

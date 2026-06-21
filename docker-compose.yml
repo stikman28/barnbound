@@ -1,0 +1,46 @@
+# BarnBound — local development stack.
+#   docker compose up        → Postgres + Next.js dev server (hot reload)
+#   App:    http://localhost:3001
+#   Health: http://localhost:3001/api/health
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: barnbound
+      POSTGRES_PASSWORD: barnbound
+      POSTGRES_DB: barnbound
+    ports:
+      # Host 5433 (5432 is often taken by a local/other Postgres); container is 5432.
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U barnbound -d barnbound"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    command: sh -c "npx prisma generate && npx prisma migrate deploy && npm run dev"
+    environment:
+      DATABASE_URL: "postgresql://barnbound:barnbound@db:5432/barnbound?schema=public"
+      AUTH_SECRET: "dev-only-insecure-secret-change-me"
+      NODE_ENV: development
+      WATCHPACK_POLLING: "true"
+    ports:
+      # Host 3001 (3000 was taken by another container); container is 3000.
+      - "3001:3000"
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
