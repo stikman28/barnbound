@@ -70,6 +70,11 @@ async function main() {
       create: { ...b, verified: true, featured: true },
     });
   }
+  // Seeding with explicit ids doesn't advance the identity sequence — fix it
+  // so user-created businesses get fresh ids instead of colliding.
+  await prisma.$executeRawUnsafe(
+    `SELECT setval(pg_get_serial_sequence('"Business"', 'id'), (SELECT MAX(id) FROM "Business"))`,
+  );
   console.log(`Seeded ${BUSINESSES.length} businesses.`);
 
   // 2) Demo sellers — shared password "password123".

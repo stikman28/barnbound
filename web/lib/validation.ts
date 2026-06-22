@@ -84,3 +84,21 @@ export const eventSchema = z.object({
   details: z.string().trim().optional(),
   category: z.string().trim().optional(),
 });
+
+// ---------- Business accounts ----------
+
+export const BUSINESS_PLANS = ["FREE", "STARTER", "PRO", "PREMIER"] as const;
+
+export const businessSchema = z.object({
+  name: z.string().trim().min(2, "Add your business name."),
+  category: z.string().trim().min(1, "Pick a category."),
+  city: z.string().trim().min(2, "Where are you located?"),
+  description: z.string().trim().min(2, "Add a short description."),
+  url: z.string().trim().optional(),
+  emoji: z.string().trim().optional(),
+  tags: z.array(z.string().trim().min(1)).max(8).optional(),
+});
+
+export const businessPlanSchema = z.object({
+  plan: z.enum(BUSINESS_PLANS),
+});

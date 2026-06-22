@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { apiGet } from "@/lib/client";
 
 type Business = {
   id: number; name: string; url: string | null; category: string; city: string;
   image: string | null; emoji: string | null; rating: number; reviews: number;
-  tags: string[]; verified: boolean; description: string;
+  tags: string[]; verified: boolean; featured: boolean; description: string;
 };
 
 export default function DirectoryPage() {
@@ -76,6 +77,7 @@ export default function DirectoryPage() {
         <main>
           <div className="results-bar">
             <div className="results-count"><strong>{filtered.length}</strong> businesses</div>
+            <Link href="/business/new" className="btn btn-primary btn-sm">+ List Your Business</Link>
           </div>
           <div className="card-grid">
             {filtered.length === 0 ? (
@@ -86,13 +88,13 @@ export default function DirectoryPage() {
               </div>
             ) : (
               filtered.map((b) => (
-                <article className="card" key={b.id}>
+                <Link href={`/business/${b.id}`} className="card card-link" key={b.id}>
                   <div className="card-image">
                     {b.image
                       /* eslint-disable-next-line @next/next/no-img-element */
                       ? <img src={b.image} alt={b.name} loading="lazy" />
                       : <span style={{ fontSize: "5rem" }}>{b.emoji}</span>}
-                    {b.verified ? <span className="badge verified">Verified</span> : null}
+                    {b.featured ? <span className="badge featured">Featured</span> : b.verified ? <span className="badge verified">Verified</span> : null}
                   </div>
                   <div className="card-body">
                     <h3>{b.name}</h3>
@@ -101,10 +103,10 @@ export default function DirectoryPage() {
                     <p className="small muted" style={{ margin: "0.4rem 0 0.6rem" }}>{b.description}</p>
                     <div className="card-tags">{b.tags.slice(0, 4).map((t) => <span className="chip" key={t}>{t}</span>)}</div>
                     <div className="card-footer">
-                      {b.url ? <a href={b.url} target="_blank" rel="noopener" className="link-arrow small">Visit website →</a> : <span className="muted small">{b.city}</span>}
+                      <span className="link-arrow small">View profile →</span>
                     </div>
                   </div>
-                </article>
+                </Link>
               ))
             )}
           </div>

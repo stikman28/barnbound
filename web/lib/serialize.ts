@@ -41,6 +41,8 @@ export function businessDTO(b: Business) {
     verified: b.verified,
     featured: b.featured,
     description: b.description,
+    plan: b.plan,
+    claimed: b.ownerId != null,
   };
 }
 

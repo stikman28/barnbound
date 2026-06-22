@@ -64,6 +64,14 @@ model User {
   replies          Reply[]
   eventsCreated    Event[]           @relation("EventCreator")
   eventRsvps       EventRsvp[]
+  businesses       Business[]        @relation("BusinessOwner")
+}
+
+enum BusinessPlan {
+  FREE
+  STARTER
+  PRO
+  PREMIER
 }
 
 model Business {
@@ -82,7 +90,13 @@ model Business {
   verified     Boolean  @default(false)
   featured     Boolean  @default(false)
   description  String
+  plan         BusinessPlan @default(FREE)
   createdAt    DateTime @default(now())
+
+  owner        User?    @relation("BusinessOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  ownerId      String?
+
+  @@index([ownerId])
 }
 
 model Listing {

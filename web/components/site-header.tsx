@@ -82,6 +82,7 @@ function UserMenu() {
           <Link href="/dashboard" className="user-dropdown-item">My Dashboard</Link>
           <Link href="/messages" className="user-dropdown-item">Messages</Link>
           <Link href="/marketplace" className="user-dropdown-item">Buy &amp; Sell</Link>
+          <Link href="/business/new" className="user-dropdown-item">List Your Business</Link>
           <button type="button" className="user-dropdown-item danger" onClick={signOut}>
             Sign Out
           </button>

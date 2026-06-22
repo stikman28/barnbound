@@ -80,7 +80,7 @@ export default function Home() {
           </div>
           <div className="card-grid">
             {businesses.map((b) => (
-              <Link href="/directory" className="card card-link" key={b.id}>
+              <Link href={`/business/${b.id}`} className="card card-link" key={b.id}>
                 <div className="card-image">
                   {b.image
                     /* eslint-disable-next-line @next/next/no-img-element */
