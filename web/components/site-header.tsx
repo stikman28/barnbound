@@ -80,6 +80,7 @@ function UserMenu() {
             {user.location ? <span className="chip">📍 {user.location}</span> : null}
           </div>
           <Link href="/dashboard" className="user-dropdown-item">My Dashboard</Link>
+          <Link href="/messages" className="user-dropdown-item">Messages</Link>
           <Link href="/marketplace" className="user-dropdown-item">Buy &amp; Sell</Link>
           <button type="button" className="user-dropdown-item danger" onClick={signOut}>
             Sign Out

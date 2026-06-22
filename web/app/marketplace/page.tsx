@@ -149,8 +149,8 @@ export default function MarketplacePage() {
         showToast(`Offer of ${priceLabel(o)} sent to ${deal.listing.seller || "the seller"}. Track it in your dashboard.`);
       } else {
         if (!message.trim()) { showToast("Please write a short message to the seller."); return; }
-        await apiPost("/api/inquiries", { listingId: deal.listing.id, message });
-        showToast("Message sent. You can follow up from your dashboard.");
+        await apiPost("/api/conversations", { listingId: deal.listing.id, body: message });
+        showToast("Message sent — continue the conversation under Messages.");
       }
       setDeal(null);
     } catch (e) { showToast((e as Error).message); }

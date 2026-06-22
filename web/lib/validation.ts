@@ -48,3 +48,12 @@ export const ORDER_STATUSES = ["ACCEPTED", "DECLINED", "COMPLETED", "CANCELLED"]
 export const orderStatusSchema = z.object({
   status: z.enum(ORDER_STATUSES),
 });
+
+export const messageSchema = z.object({
+  body: z.string().trim().min(1, "Write a message.").max(2000),
+});
+
+export const conversationStartSchema = z.object({
+  listingId: z.string().min(1),
+  body: z.string().trim().min(1, "Write a message.").max(2000),
+});

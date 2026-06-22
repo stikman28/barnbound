@@ -53,6 +53,10 @@ model User {
   orders       Order[]
   inquiries    Inquiry[]
   favorites    Favorite[]
+
+  buyerConversations  Conversation[] @relation("BuyerConversations")
+  sellerConversations Conversation[] @relation("SellerConversations")
+  messages            Message[]
 }
 
 model Business {
@@ -94,9 +98,10 @@ model Listing {
   seller      User          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   sellerId    String
 
-  orders      Order[]
-  inquiries   Inquiry[]
-  favorites   Favorite[]
+  orders        Order[]
+  inquiries     Inquiry[]
+  favorites     Favorite[]
+  conversations Conversation[]
 
   @@index([type])
   @@index([sellerId])
@@ -143,4 +148,36 @@ model Favorite {
 
   @@unique([userId, listingId])
   @@index([userId])
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  listing   Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId String
+  buyer     User      @relation("BuyerConversations", fields: [buyerId], references: [id], onDelete: Cascade)
+  buyerId   String
+  seller    User      @relation("SellerConversations", fields: [sellerId], references: [id], onDelete: Cascade)
+  sellerId  String
+
+  messages  Message[]
+
+  @@unique([listingId, buyerId])
+  @@index([buyerId])
+  @@index([sellerId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  body           String
+  createdAt      DateTime     @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId       String
+
+  @@index([conversationId])
 }

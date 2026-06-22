@@ -8,13 +8,11 @@ import { apiGet, apiPost, apiPatch, apiDelete, priceLabel } from "@/lib/client";
 
 type Listing = { id: string; type: string; title: string; price: number; city: string; emoji: string; breed: string | null; discipline: string | null; age: number | null; category: string | null; verified: boolean; featured: boolean; seller: string | null };
 type Order = { id: string; title: string; offer: number; price?: number; message: string | null; status: string; createdAt: string };
-type Inquiry = { id: string; title: string; message: string; createdAt: string };
 type Buyer = { name: string; email: string } | null;
 type ReceivedOrder = { id: string; title: string; offer: number; message: string | null; status: string; createdAt: string; buyer: Buyer };
-type ReceivedInquiry = { id: string; title: string; message: string; createdAt: string; buyer: Buyer };
 type Dash = {
-  listings: Listing[]; orders: Order[]; favorites: Listing[]; inquiries: Inquiry[];
-  receivedOffers: ReceivedOrder[]; receivedInquiries: ReceivedInquiry[];
+  listings: Listing[]; orders: Order[]; favorites: Listing[];
+  receivedOffers: ReceivedOrder[];
 };
 
 function fmtDate(iso: string) {
@@ -29,10 +27,8 @@ function metaLine(l: Listing) {
 const TABS = [
   { key: "listings", label: "My Listings" },
   { key: "received-offers", label: "Offers Received" },
-  { key: "received-messages", label: "Inquiries" },
   { key: "offers", label: "My Offers" },
   { key: "saved", label: "Saved" },
-  { key: "messages", label: "My Messages" },
 ];
 
 export default function DashboardPage() {
@@ -80,10 +76,8 @@ export default function DashboardPage() {
   const counts: Record<string, number> = {
     listings: data.listings.length,
     "received-offers": data.receivedOffers.length,
-    "received-messages": data.receivedInquiries.length,
     offers: data.orders.length,
     saved: data.favorites.length,
-    messages: data.inquiries.length,
   };
 
   return (
@@ -167,28 +161,6 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {tab === "received-messages" && (
-          <section>
-            <h2>Buyer Inquiries on Your Listings</h2>
-            {data.receivedInquiries.length === 0 ? (
-              <Empty emoji="📨" title="No inquiries yet" body="When a buyer contacts you about one of your listings, their message shows up here." />
-            ) : (
-              <div className="dash-list">
-                {data.receivedInquiries.map((m) => (
-                  <div className="dash-row" key={m.id}>
-                    <div className="dash-row-main">
-                      <strong>Re: {m.title}</strong>
-                      <div className="dash-row-note">“{m.message}”</div>
-                      <div className="meta muted small">From {m.buyer?.name ?? "a buyer"}{m.buyer ? ` · ${m.buyer.email}` : ""} · {fmtDate(m.createdAt)}</div>
-                    </div>
-                    <span className="status-pill">New</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
-
         {tab === "offers" && (
           <section>
             <h2>Offers &amp; Purchase Requests You&apos;ve Sent</h2>
@@ -237,27 +209,6 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {tab === "messages" && (
-          <section>
-            <h2>Messages to Sellers</h2>
-            {data.inquiries.length === 0 ? (
-              <Empty emoji="✉️" title="No messages yet" body="Use “Contact” on a listing to ask a seller a question — your messages collect here." />
-            ) : (
-              <div className="dash-list">
-                {data.inquiries.map((m) => (
-                  <div className="dash-row" key={m.id}>
-                    <div className="dash-row-main">
-                      <strong>Re: {m.title}</strong>
-                      <div className="dash-row-note">“{m.message}”</div>
-                      <div className="meta muted small">Sent {fmtDate(m.createdAt)}</div>
-                    </div>
-                    <span className="status-pill">Sent</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        )}
       </div>
 
       {toast && <div className="bb-toast show">{toast}</div>}
