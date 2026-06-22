@@ -57,6 +57,13 @@ model User {
   buyerConversations  Conversation[] @relation("BuyerConversations")
   sellerConversations Conversation[] @relation("SellerConversations")
   messages            Message[]
+
+  groupsCreated    Group[]           @relation("GroupCreator")
+  groupMemberships GroupMembership[]
+  threads          Thread[]
+  replies          Reply[]
+  eventsCreated    Event[]           @relation("EventCreator")
+  eventRsvps       EventRsvp[]
 }
 
 model Business {
@@ -180,4 +187,91 @@ model Message {
   senderId       String
 
   @@index([conversationId])
+}
+
+// ---------- Community ----------
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  icon        String   @default("👥")
+  createdAt   DateTime @default(now())
+
+  createdBy   User?    @relation("GroupCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  memberships GroupMembership[]
+}
+
+model GroupMembership {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  @@unique([groupId, userId])
+  @@index([userId])
+}
+
+model Thread {
+  id        String   @id @default(cuid())
+  title     String
+  category  String
+  icon      String   @default("💬")
+  body      String   @default("")
+  createdAt DateTime @default(now())
+
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
+
+  replies   Reply[]
+
+  @@index([authorId])
+}
+
+model Reply {
+  id        String   @id @default(cuid())
+  body      String
+  createdAt DateTime @default(now())
+
+  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  threadId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
+
+  @@index([threadId])
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  title       String
+  startsAt    DateTime
+  location    String?
+  details     String?
+  category    String    @default("Community")
+  createdAt   DateTime  @default(now())
+
+  createdBy   User?     @relation("EventCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  rsvps       EventRsvp[]
+
+  @@index([startsAt])
+}
+
+model EventRsvp {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  @@unique([eventId, userId])
+  @@index([userId])
 }

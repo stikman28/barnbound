@@ -110,6 +110,67 @@ async function main() {
     });
   }
   console.log(`Seeded ${LISTINGS.length} listings.`);
+
+  // 4) Community — seed only when empty so we never clobber user-created content.
+  if ((await prisma.group.count()) === 0) {
+    const groups = [
+      { icon: "🤠", name: "Front Range Western Riders", description: "Western & ranch riders across the Front Range." },
+      { icon: "🎠", name: "Larimer County Hunter/Jumper", description: "Hunter/jumper riders in Larimer County." },
+      { icon: "🏇", name: "CSU Equestrian & Alumni", description: "CSU equestrian team, students, and alumni." },
+      { icon: "🐎", name: "Northern Colorado Dressage", description: "Dressage enthusiasts across Northern Colorado." },
+      { icon: "🏃", name: "Barrel Racers of NoCo", description: "Barrel racing community, jackpots, and tips." },
+      { icon: "🌄", name: "Colorado Trail Riders", description: "Trail riding, camping, and conditioning." },
+    ];
+    for (const g of groups) {
+      const group = await prisma.group.create({ data: g });
+      for (const s of sellers) {
+        await prisma.groupMembership.create({ data: { groupId: group.id, userId: s.id } });
+      }
+    }
+    console.log(`Seeded ${groups.length} groups.`);
+  }
+
+  if ((await prisma.thread.count()) === 0) {
+    const threads = [
+      { icon: "❓", title: "Best winter blanket for a hard keeper?", category: "Horse Care", body: "My older gelding drops weight in winter — what blankets are you using?" },
+      { icon: "🐴", title: "Recommendations for a reliable hauler to Texas?", category: "Transport", body: "Need to ship a horse to Texas next month. Who have you trusted?" },
+      { icon: "🩺", title: "Anyone tried Equioxx long-term for an older horse?", category: "Health", body: "Vet suggested Equioxx for arthritis. Long-term experiences?" },
+      { icon: "🎠", title: "Saddle fitting in Northern Colorado — who do you use?", category: "Tack", body: "Looking for a good independent saddle fitter near Fort Collins." },
+      { icon: "🏆", title: "First barrel race — what should I bring?", category: "Competition", body: "Entering my first jackpot. What's on your must-bring list?" },
+      { icon: "🌾", title: "Cutting back on alfalfa — what are you feeding?", category: "Nutrition", body: "Trying to reduce alfalfa. What balanced rations work for you?" },
+    ];
+    let ti = 0;
+    for (const t of threads) {
+      const author = sellers[ti % sellers.length];
+      const thread = await prisma.thread.create({ data: { ...t, authorId: author.id } });
+      if (ti < 2) {
+        const replier = sellers[(ti + 1) % sellers.length];
+        await prisma.reply.create({ data: { threadId: thread.id, authorId: replier.id, body: "Great question — following along!" } });
+      }
+      ti++;
+    }
+    console.log(`Seeded ${threads.length} threads.`);
+  }
+
+  if ((await prisma.event.count()) === 0) {
+    const events = [
+      { title: "Front Range Ranch Horse Clinic", date: "2026-11-08", location: "Poudre River Stables", details: "$150 · all levels", category: "Clinic" },
+      { title: "Larimer County Saddle Club Show", date: "2026-11-15", location: "Loveland Fairgrounds", details: "All day", category: "Show" },
+      { title: "BarnBound Meet & Greet — Fort Collins", date: "2026-11-22", location: "Happy Horse Tack Shop", details: "2pm", category: "Community" },
+      { title: "CSU Equine Sciences Open House", date: "2026-12-06", location: "CSU Equine Center", details: "10am", category: "Education" },
+      { title: "Winter Dressage Schooling Show", date: "2026-12-13", location: "Mountain View Arena", details: "All day", category: "Show" },
+      { title: "Beginner Barrel Racing Clinic", date: "2027-01-10", location: "Soukup Stables", details: "$125", category: "Clinic" },
+    ];
+    let ei = 0;
+    for (const e of events) {
+      const event = await prisma.event.create({
+        data: { title: e.title, startsAt: new Date(e.date), location: e.location, details: e.details, category: e.category },
+      });
+      if (ei < 2) await prisma.eventRsvp.create({ data: { eventId: event.id, userId: sellers[ei].id } });
+      ei++;
+    }
+    console.log(`Seeded ${events.length} events.`);
+  }
 }
 
 main()

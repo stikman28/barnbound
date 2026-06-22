@@ -57,3 +57,30 @@ export const conversationStartSchema = z.object({
   listingId: z.string().min(1),
   body: z.string().trim().min(1, "Write a message.").max(2000),
 });
+
+// ---------- Community ----------
+
+export const groupSchema = z.object({
+  name: z.string().trim().min(2, "Give your group a name."),
+  description: z.string().trim().min(2, "Add a short description."),
+  icon: z.string().trim().optional(),
+});
+
+export const threadSchema = z.object({
+  title: z.string().trim().min(3, "Give your thread a title."),
+  category: z.string().trim().min(1).optional(),
+  body: z.string().trim().optional().default(""),
+  icon: z.string().trim().optional(),
+});
+
+export const replySchema = z.object({
+  body: z.string().trim().min(1, "Write a reply.").max(2000),
+});
+
+export const eventSchema = z.object({
+  title: z.string().trim().min(3, "Give your event a title."),
+  startsAt: z.string().min(1, "Pick a date."),
+  location: z.string().trim().optional(),
+  details: z.string().trim().optional(),
+  category: z.string().trim().optional(),
+});
