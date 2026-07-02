@@ -97,8 +97,10 @@ async function main() {
   );
   console.log(`Seeded ${BUSINESSES.length} businesses.`);
 
-  // 2) Demo sellers — shared password "password123".
-  const passwordHash = await bcrypt.hash("password123", 10);
+  // 2) Demo sellers — password123 in dev; production seeds MUST set
+  // SEED_PASSWORD (the demo creds are documented publicly in issue #1).
+  const seedPassword = process.env.SEED_PASSWORD || "password123";
+  const passwordHash = await bcrypt.hash(seedPassword, 10);
   const verifiedAt = new Date(); // demo accounts skip email verification
   const sellers = [];
   for (const s of DEMO_SELLERS) {
@@ -109,7 +111,7 @@ async function main() {
     });
     sellers.push(user);
   }
-  console.log(`Seeded ${sellers.length} demo sellers (password: password123).`);
+  console.log(`Seeded ${sellers.length} demo sellers (password: ${process.env.SEED_PASSWORD ? "$SEED_PASSWORD" : "password123"}).`);
 
   // 3) Listings — reset demo sellers' listings, then recreate.
   await prisma.listing.deleteMany({ where: { sellerId: { in: sellers.map((s) => s.id) } } });
@@ -144,7 +146,7 @@ async function main() {
     update: { role: "ADMIN", emailVerified: verifiedAt },
     create: { email: "admin@barnbound.test", name: "BarnBound Admin", location: "Fort Collins, CO", role: "ADMIN", passwordHash, emailVerified: verifiedAt },
   });
-  console.log("Seeded admin account (admin@barnbound.test, password: password123).");
+  console.log(`Seeded admin account (admin@barnbound.test, password: ${process.env.SEED_PASSWORD ? "$SEED_PASSWORD" : "password123"}).`);
 
   if ((await prisma.product.count()) === 0) {
     const merchant = sellers[0]; // Sage — the MERCHANT demo account
