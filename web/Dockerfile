@@ -15,6 +15,10 @@ RUN npm ci
 # App source + generated Prisma client + production build.
 COPY . .
 RUN npx prisma generate
+# NEXT_PUBLIC_* values are inlined at build time. The Turnstile site key is
+# public by design (it renders in every browser) — safe as a build arg.
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY=""
+ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY
 # A placeholder URL lets `next build` import server modules without a real DB.
 RUN DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder" npm run build
 
