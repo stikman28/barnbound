@@ -56,6 +56,10 @@ model User {
   verifyCode       String?
   verifyCodeExpiry DateTime?
 
+  // Session revocation (Tier 3): tokens carry this version; bumping it
+  // invalidates every outstanding session ("sign out everywhere").
+  sessionVersion Int @default(0)
+
   listings     Listing[]
   orders       Order[]
   inquiries    Inquiry[]

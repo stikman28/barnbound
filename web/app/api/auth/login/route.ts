@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   }
   recordLoginSuccess(email);
 
-  await createSession(user.id);
+  await createSession(user.id, user.sessionVersion);
   return ok({
     user: {
       id: user.id,

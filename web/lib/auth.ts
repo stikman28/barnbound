@@ -6,7 +6,9 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
 const COOKIE = "bb_session";
-const MAX_AGE = 60 * 60 * 24 * 30; // 30 days
+// 7 days (was 30): shorter exposure window; tokens also carry the user's
+// sessionVersion so bumping it server-side revokes every outstanding session.
+const MAX_AGE = 60 * 60 * 24 * 7;
 
 function secret() {
   const s = process.env.AUTH_SECRET;
@@ -22,11 +24,11 @@ export function verifyPassword(password: string, hash: string) {
   return bcrypt.compare(password, hash);
 }
 
-export async function createSession(userId: string) {
-  const token = await new SignJWT({ uid: userId })
+export async function createSession(userId: string, sessionVersion = 0) {
+  const token = await new SignJWT({ uid: userId, sv: sessionVersion })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("30d")
+    .setExpirationTime("7d")
     .sign(secret());
 
   const store = await cookies();
@@ -44,16 +46,21 @@ export async function destroySession() {
   store.delete(COOKIE);
 }
 
-export async function getSessionUserId(): Promise<string | null> {
+async function getSessionClaims(): Promise<{ uid: string; sv: number } | null> {
   const store = await cookies();
   const token = store.get(COOKIE)?.value;
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, secret());
-    return (payload.uid as string) ?? null;
+    if (typeof payload.uid !== "string") return null;
+    return { uid: payload.uid, sv: typeof payload.sv === "number" ? payload.sv : 0 };
   } catch {
     return null;
   }
+}
+
+export async function getSessionUserId(): Promise<string | null> {
+  return (await getSessionClaims())?.uid ?? null;
 }
 
 export type SafeUser = {
@@ -66,13 +73,19 @@ export type SafeUser = {
 };
 
 export async function getCurrentUser(): Promise<SafeUser | null> {
-  const uid = await getSessionUserId();
-  if (!uid) return null;
+  const claims = await getSessionClaims();
+  if (!claims) return null;
   const user = await prisma.user.findUnique({
-    where: { id: uid },
-    select: { id: true, email: true, name: true, location: true, role: true, emailVerified: true },
+    where: { id: claims.uid },
+    select: {
+      id: true, email: true, name: true, location: true, role: true,
+      emailVerified: true, sessionVersion: true,
+    },
   });
-  return user;
+  // Stale token: the user signed out everywhere after this token was issued.
+  if (!user || user.sessionVersion !== claims.sv) return null;
+  const { sessionVersion: _sv, ...safe } = user;
+  return safe;
 }
 
 /** Standard 403 for write actions that require a verified email. */

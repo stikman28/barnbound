@@ -50,6 +50,12 @@ function UserMenu() {
     router.push("/");
     router.refresh();
   }
+  async function signOutEverywhere() {
+    await apiPost("/api/auth/logout-all").catch(() => {});
+    setUser(null);
+    router.push("/");
+    router.refresh();
+  }
 
   return (
     <div className="header-cta">
@@ -90,6 +96,10 @@ function UserMenu() {
           {user.role === "ADMIN" ? <Link href="/admin" className="user-dropdown-item">Admin — Claims</Link> : null}
           <button type="button" className="user-dropdown-item danger" onClick={signOut}>
             Sign Out
+          </button>
+          <button type="button" className="user-dropdown-item danger" onClick={signOutEverywhere}
+            title="Revokes your session on every device">
+            Sign Out Everywhere
           </button>
         </div>
       </div>

@@ -27,6 +27,7 @@ export default function SiteFooter() {
           <h4>About</h4>
           <Link href="/about">Our Story</Link>
           <Link href="/about">Contact</Link>
+          <Link href="/trust">Trust &amp; Safety</Link>
         </div>
         <div className="foot-col qr">
           {/* eslint-disable-next-line @next/next/no-img-element */}
