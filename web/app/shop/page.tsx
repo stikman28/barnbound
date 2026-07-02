@@ -147,7 +147,11 @@ export default function ShopPage() {
           </div>
           <div className="card-footer">
             <span className="chip">{out ? "Out of stock" : `${p.inventory} in stock`}</span>
-            {p.seller ? <span className="muted small">Ships from {p.seller}</span> : null}
+            {p.seller ? (
+              <Link href={`/seller/${p.sellerId}`} className="muted small" title="View seller profile">
+                Ships from {p.seller}
+              </Link>
+            ) : null}
             {user?.id !== p.sellerId ? (
               <button className="btn btn-ghost btn-sm" title="Report this product" aria-label="Report product"
                 style={{ marginLeft: "auto", padding: "0 0.4rem" }} onClick={() => report(p)}>⚑</button>

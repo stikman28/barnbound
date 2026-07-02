@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/components/user-context";
 import { apiGet, apiPost, priceLabel } from "@/lib/client";
@@ -265,7 +266,11 @@ export default function MarketplacePage() {
                       <div className="card-price">{priceLabel(l.price)}</div>
                       <div className="card-footer">
                         <span className="chip">{l.verified ? "✓ Verified Seller" : "Unverified"}</span>
-                        {l.seller ? <span className="muted small">{l.seller}</span> : null}
+                        {l.seller ? (
+                          <Link href={`/seller/${l.sellerId}`} className="muted small" title="View seller profile">
+                            {l.seller}
+                          </Link>
+                        ) : null}
                         {!mine ? (
                           <button className="btn btn-ghost btn-sm" title="Report this listing" aria-label="Report listing"
                             style={{ marginLeft: "auto", padding: "0 0.4rem" }} onClick={() => report(l)}>⚑</button>
