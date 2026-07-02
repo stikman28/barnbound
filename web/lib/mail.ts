@@ -1,10 +1,32 @@
-// Outbound email. No provider is wired up yet, so this logs to the server
-// console in dev; when we pick a provider (Resend/SES/etc.) only sendMail
-// changes. Verification codes also work over SMS later via the same shape.
+// Outbound email via Resend (https://resend.com) when RESEND_API_KEY is set;
+// falls back to console logging in dev so verification codes stay usable
+// without a provider. Same shape can carry SMS later.
+
+const FROM = () => process.env.MAIL_FROM || "BarnBound <verify@barn-bound.com>";
 
 export async function sendMail(to: string, subject: string, body: string) {
-  // TODO: real provider. For now, visible in `docker compose logs web`.
-  console.log(`\n=== MAIL to ${to} ===\n${subject}\n${body}\n=== END MAIL ===\n`);
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    // Dev fallback — visible in `docker compose logs web`.
+    console.log(`\n=== MAIL to ${to} ===\n${subject}\n${body}\n=== END MAIL ===\n`);
+    return;
+  }
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ from: FROM(), to: [to], subject, text: body }),
+    });
+    if (!res.ok) {
+      const err = await res.text().catch(() => "");
+      console.error(`mail send failed (${res.status}) to ${to}: ${err.slice(0, 300)}`);
+    }
+  } catch (e) {
+    console.error(`mail send failed to ${to}:`, e);
+  }
 }
 
 export function makeVerifyCode(): string {
