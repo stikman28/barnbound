@@ -1,6 +1,6 @@
 # Production image for the BarnBound web app (Next.js 16).
 # Build context is ./web (see render.yaml: dockerContext).
-FROM node:22-slim
+FROM node:26-slim
 
 # OpenSSL keeps Prisma CLI (generate/migrate) quiet and happy.
 RUN apt-get update -y && apt-get install -y --no-install-recommends openssl \
