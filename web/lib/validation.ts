@@ -30,7 +30,7 @@ export const claimDecisionSchema = z.object({
   action: z.enum(["APPROVE", "REJECT"]),
 });
 
-export const REPORT_TARGETS = ["LISTING", "PRODUCT", "BUSINESS", "THREAD", "USER"] as const;
+export const REPORT_TARGETS = ["LISTING", "PRODUCT", "BUSINESS", "THREAD", "USER", "WANTED"] as const;
 
 export const reportSchema = z.object({
   targetType: z.enum(REPORT_TARGETS),
@@ -41,6 +41,24 @@ export const reportSchema = z.object({
 export const reportDecisionSchema = z.object({
   action: z.enum(["RESOLVE", "DISMISS"]),
   removeContent: z.boolean().optional(), // RESOLVE only: pull the listing/product
+});
+
+// ---------- Wanted ads (Phase 5) ----------
+
+export const wantedAdSchema = z.object({
+  title: z.string().trim().min(3, "What are you looking for?"),
+  description: z.string().trim().optional().default(""),
+  category: z.string().trim().min(1, "Pick a category."),
+  budget: z.coerce.number().positive().optional(),
+  city: z.string().trim().optional(),
+});
+
+export const wantedStatusSchema = z.object({
+  status: z.enum(["FULFILLED", "CLOSED"]),
+});
+
+export const wantedResponseSchema = z.object({
+  message: z.string().trim().min(5, "Tell them what you've got.").max(2000),
 });
 
 export const listingSchema = z.object({

@@ -183,3 +183,35 @@ export function fulfillmentDTO(
     shipTo: `${i.order.shipName}, ${i.order.shipAddress}, ${i.order.shipCity}, ${i.order.shipState} ${i.order.shipZip}`,
   };
 }
+
+// ---------- Wanted ads (Phase 5) ----------
+
+type WantedWithExtras = {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  budgetCents: number | null;
+  city: string | null;
+  status: string;
+  createdAt: Date;
+  buyerId: string;
+  buyer: Pick<User, "id" | "name">;
+  _count: { responses: number };
+};
+
+export function wantedDTO(w: WantedWithExtras) {
+  return {
+    id: w.id,
+    title: w.title,
+    description: w.description,
+    category: w.category,
+    budget: w.budgetCents != null ? w.budgetCents / 100 : null,
+    city: w.city,
+    status: w.status,
+    createdAt: w.createdAt,
+    buyerId: w.buyerId,
+    buyer: w.buyer.name,
+    responseCount: w._count.responses,
+  };
+}

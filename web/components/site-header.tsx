@@ -9,6 +9,7 @@ import { apiPost } from "@/lib/client";
 const NAV = [
   { href: "/", label: "Home" },
   { href: "/marketplace", label: "Marketplace" },
+  { href: "/wanted", label: "Wanted" },
   { href: "/shop", label: "Shop" },
   { href: "/directory", label: "Directory" },
   { href: "/community", label: "Community" },

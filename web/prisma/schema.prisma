@@ -84,6 +84,51 @@ model User {
   claimRequests  BusinessClaimRequest[]
   reports        Report[]
   auditEntries   AuditLog[]
+  wantedAds       WantedAd[]
+  wantedResponses WantedResponse[]
+}
+
+// ---------- Wanted ads (Phase 5) ----------
+// The reverse marketplace: buyers post what they're looking for and sellers
+// come to them.
+
+enum WantedStatus {
+  OPEN
+  FULFILLED
+  CLOSED
+}
+
+model WantedAd {
+  id          String       @id @default(cuid())
+  title       String
+  description String       @default("")
+  category    String
+  budgetCents Int?
+  city        String?
+  status      WantedStatus @default(OPEN)
+  createdAt   DateTime     @default(now())
+
+  buyer   User   @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  buyerId String
+
+  responses WantedResponse[]
+
+  @@index([status])
+  @@index([buyerId])
+}
+
+model WantedResponse {
+  id        String   @id @default(cuid())
+  message   String
+  createdAt DateTime @default(now())
+
+  wantedAd    WantedAd @relation(fields: [wantedAdId], references: [id], onDelete: Cascade)
+  wantedAdId  String
+  responder   User     @relation(fields: [responderId], references: [id], onDelete: Cascade)
+  responderId String
+
+  @@unique([wantedAdId, responderId])
+  @@index([responderId])
 }
 
 // ---------- Trust & safety (Phase S Tier 2) ----------

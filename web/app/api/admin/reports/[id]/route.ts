@@ -30,8 +30,11 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     } else if (report.targetType === "PRODUCT") {
       await prisma.product.updateMany({ where: { id: report.targetId }, data: { status: "ARCHIVED" } });
       removed = true;
+    } else if (report.targetType === "WANTED") {
+      await prisma.wantedAd.updateMany({ where: { id: report.targetId }, data: { status: "CLOSED" } });
+      removed = true;
     } else {
-      return bad("Only listings and products can be removed from here.");
+      return bad("Only listings, products, and wanted ads can be removed from here.");
     }
   }
 

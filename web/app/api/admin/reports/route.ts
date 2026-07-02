@@ -25,6 +25,10 @@ async function targetLabel(targetType: string, targetId: string): Promise<string
       const u = await prisma.user.findUnique({ where: { id: targetId }, select: { name: true, email: true } });
       return u ? `${u.name} <${u.email}>` : "(deleted)";
     }
+    if (targetType === "WANTED") {
+      const w = await prisma.wantedAd.findUnique({ where: { id: targetId }, select: { title: true, status: true } });
+      return w ? `${w.title}${w.status !== "OPEN" ? ` (${w.status})` : ""}` : "(deleted)";
+    }
   } catch { /* fall through */ }
   return "(unknown)";
 }

@@ -167,6 +167,21 @@ async function main() {
     console.log(`Seeded ${PRODUCTS.length} shop products.`);
   }
 
+  // 3c) Wanted ads — seed only when empty.
+  if ((await prisma.wantedAd.count()) === 0) {
+    const wanted = [
+      { title: "Kid-safe pony under 13hh", category: "Horses", budgetCents: 650000, city: "Fort Collins, CO", description: "Looking for a bombproof first pony for my 8-year-old. Prefer mare or gelding, good with farrier." },
+      { title: "Used 16in western trail saddle", category: "Tack & Saddles", budgetCents: 80000, city: "Loveland, CO", description: "Comfortable trail saddle, semi-QH bars. Circle Y or Tucker preferred." },
+      { title: "Grass hay — 100 bales delivered", category: "Hay & Feed", budgetCents: null, city: "Greeley, CO", description: "Need 100 bales of clean grass hay delivered monthly. Long-term arrangement welcome." },
+    ];
+    let wi = 0;
+    for (const w of wanted) {
+      await prisma.wantedAd.create({ data: { ...w, buyerId: sellers[wi % sellers.length].id } });
+      wi++;
+    }
+    console.log(`Seeded ${wanted.length} wanted ads.`);
+  }
+
   // 4) Community — seed only when empty so we never clobber user-created content.
   if ((await prisma.group.count()) === 0) {
     const groups = [
