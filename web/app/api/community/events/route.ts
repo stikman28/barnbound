@@ -1,12 +1,32 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
 import { getCurrentUser, unverifiedResponse } from "@/lib/auth";
 import { eventSchema } from "@/lib/validation";
 import { ok, bad, unauthorized } from "@/lib/http";
 
 // GET /api/community/events — upcoming events with RSVP counts + my RSVP.
-export async function GET() {
+// Discovery filters: ?category=Show&q=barrel&upcoming=1
+export async function GET(req: Request) {
   const user = await getCurrentUser();
+  const { searchParams } = new URL(req.url);
+  const where: Prisma.EventWhereInput = {};
+
+  const category = searchParams.get("category");
+  if (category) where.category = category;
+
+  if (searchParams.get("upcoming") === "1") where.startsAt = { gte: new Date() };
+
+  const q = searchParams.get("q")?.trim();
+  if (q) {
+    where.OR = [
+      { title: { contains: q, mode: "insensitive" } },
+      { location: { contains: q, mode: "insensitive" } },
+      { details: { contains: q, mode: "insensitive" } },
+    ];
+  }
+
   const events = await prisma.event.findMany({
+    where,
     orderBy: { startsAt: "asc" },
     include: { _count: { select: { rsvps: true } } },
   });

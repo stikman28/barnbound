@@ -231,6 +231,8 @@ async function main() {
       { title: "CSU Equine Sciences Open House", date: "2026-12-06", location: "CSU Equine Center", details: "10am", category: "Education" },
       { title: "Winter Dressage Schooling Show", date: "2026-12-13", location: "Mountain View Arena", details: "All day", category: "Show" },
       { title: "Beginner Barrel Racing Clinic", date: "2027-01-10", location: "Soukup Stables", details: "$125", category: "Clinic" },
+      { title: "Greeley Stampede Kickoff Rodeo", date: "2026-08-28", location: "Island Grove Arena, Greeley", details: "PRCA-sanctioned · gates 5pm", category: "Rodeo" },
+      { title: "NoCo Ranch Rodeo Series — Round 1", date: "2026-09-12", location: "Loveland Fairgrounds", details: "Team entries welcome", category: "Rodeo" },
     ];
     let ei = 0;
     for (const e of events) {
