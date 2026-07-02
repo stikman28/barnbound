@@ -15,6 +15,7 @@ enum Role {
   TRAINER
   BARN_OWNER
   MERCHANT
+  ADMIN
 }
 
 enum ListingType {
@@ -65,6 +66,11 @@ model User {
   eventsCreated    Event[]           @relation("EventCreator")
   eventRsvps       EventRsvp[]
   businesses       Business[]        @relation("BusinessOwner")
+
+  products       Product[]       @relation("ProductSeller")
+  cartItems      CartItem[]
+  shopOrders     ShopOrder[]     @relation("ShopBuyer")
+  shopOrderItems ShopOrderItem[] @relation("ShopItemSeller")
 }
 
 enum BusinessPlan {
@@ -201,6 +207,112 @@ model Message {
   senderId       String
 
   @@index([conversationId])
+}
+
+// ---------- Shop (Phase 4 — drop-ship commerce) ----------
+// New-goods catalog sold by merchants and drop-shipped to buyers. Distinct
+// from Listing (used-goods classifieds with offers). PayPal is stubbed until
+// the account exists: checkout marks orders PAID with a STUB payment ref.
+
+enum ProductStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum ShopOrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+enum FulfillmentStatus {
+  NEW
+  SHIPPED
+  DELIVERED
+}
+
+model Product {
+  id            String        @id @default(cuid())
+  name          String
+  description   String        @default("")
+  priceCents    Int
+  shippingCents Int           @default(0)
+  emoji         String        @default("🛍️")
+  category      String
+  brand         String?
+  inventory     Int           @default(0)
+  pick          Boolean       @default(false) // BarnBound Picks — admin-curated
+  status        ProductStatus @default(ACTIVE)
+  createdAt     DateTime      @default(now())
+
+  seller   User   @relation("ProductSeller", fields: [sellerId], references: [id], onDelete: Cascade)
+  sellerId String
+
+  cartItems  CartItem[]
+  orderItems ShopOrderItem[]
+
+  @@index([sellerId])
+  @@index([category])
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  qty       Int
+  createdAt DateTime @default(now())
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String
+
+  @@unique([userId, productId])
+  @@index([userId])
+}
+
+model ShopOrder {
+  id              String          @id @default(cuid())
+  subtotalCents   Int
+  shippingCents   Int
+  totalCents      Int
+  commissionCents Int // platform cut (basis for future seller payouts)
+  status          ShopOrderStatus @default(PENDING)
+  paymentProvider String          @default("PAYPAL_STUB")
+  paymentRef      String?
+  shipName        String
+  shipAddress     String
+  shipCity        String
+  shipState       String
+  shipZip         String
+  createdAt       DateTime        @default(now())
+
+  buyer   User   @relation("ShopBuyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  buyerId String
+
+  items ShopOrderItem[]
+
+  @@index([buyerId])
+}
+
+// One row per product in an order, routed to that product's seller for
+// drop-ship fulfillment. Snapshots survive product edits/deletion.
+model ShopOrderItem {
+  id                String            @id @default(cuid())
+  nameSnapshot      String
+  priceCentsSnap    Int
+  qty               Int
+  commissionCents   Int
+  fulfillmentStatus FulfillmentStatus @default(NEW)
+  createdAt         DateTime          @default(now())
+
+  order     ShopOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   String
+  product   Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productId String?
+  seller    User      @relation("ShopItemSeller", fields: [sellerId], references: [id], onDelete: Cascade)
+  sellerId  String
+
+  @@index([orderId])
+  @@index([sellerId])
 }
 
 // ---------- Community ----------

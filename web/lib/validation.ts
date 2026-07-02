@@ -102,3 +102,42 @@ export const businessSchema = z.object({
 export const businessPlanSchema = z.object({
   plan: z.enum(BUSINESS_PLANS),
 });
+
+// ---------- Shop (Phase 4) ----------
+
+export const PRODUCT_CATEGORIES = [
+  "Tack & Saddles", "Horse Care", "Apparel & Boots", "Barn & Stable", "Feed & Supplements", "Gifts & Lifestyle",
+] as const;
+
+export const productSchema = z.object({
+  name: z.string().trim().min(3, "Give your product a name."),
+  description: z.string().trim().optional().default(""),
+  price: z.coerce.number().positive("Enter a price."),
+  shipping: z.coerce.number().min(0).optional().default(0),
+  category: z.string().trim().min(1, "Pick a category."),
+  brand: z.string().trim().optional(),
+  inventory: z.coerce.number().int().min(0).optional().default(0),
+  emoji: z.string().trim().optional(),
+});
+
+export const productUpdateSchema = productSchema.partial().extend({
+  status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
+  pick: z.boolean().optional(), // admin-only, enforced in the route
+});
+
+export const cartItemSchema = z.object({
+  productId: z.string().min(1),
+  qty: z.coerce.number().int().min(0).max(99), // 0 removes the item
+});
+
+export const checkoutSchema = z.object({
+  shipName: z.string().trim().min(2, "Who is this shipping to?"),
+  shipAddress: z.string().trim().min(3, "Enter a street address."),
+  shipCity: z.string().trim().min(2, "Enter a city."),
+  shipState: z.string().trim().min(2, "Enter a state."),
+  shipZip: z.string().trim().min(3, "Enter a ZIP code."),
+});
+
+export const fulfillmentSchema = z.object({
+  fulfillmentStatus: z.enum(["SHIPPED", "DELIVERED"]),
+});

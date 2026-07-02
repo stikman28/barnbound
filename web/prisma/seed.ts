@@ -55,6 +55,26 @@ const LISTINGS: SeedListing[] = [
   { type: "OTHER", title: "200 Bales — Grass/Alfalfa Mix Hay", category: "Hay & Feed", price: 18, city: "Berthoud, CO", emoji: "🌾", featured: false, description: "Per bale. 2026 cutting, good color, clean. Discount on pallet quantities." },
 ];
 
+type SeedProduct = {
+  name: string; price: number; shipping: number; category: string; emoji: string;
+  brand?: string; inventory: number; pick: boolean; description: string;
+};
+
+const PRODUCTS: SeedProduct[] = [
+  { name: "Weaver Leather Halter — Cob", price: 34.99, shipping: 0, category: "Tack & Saddles", emoji: "🐴", brand: "Weaver Leather", inventory: 25, pick: true, description: "Doubled and stitched premium leather halter with rolled throat." },
+  { name: "Professional's Choice SMx Air Ride Pad", price: 189.95, shipping: 0, category: "Tack & Saddles", emoji: "🤠", brand: "Professional's Choice", inventory: 12, pick: true, description: "Shock-absorbing western saddle pad — the barrel racer's favorite." },
+  { name: "Herm Sprenger Dynamic RS Snaffle", price: 129.0, shipping: 5, category: "Tack & Saddles", emoji: "🎠", brand: "Herm Sprenger", inventory: 8, pick: false, description: "German-made double-jointed loose ring snaffle, Sensogan mouthpiece." },
+  { name: "Farnam Vetrolin Bath — 64oz", price: 21.99, shipping: 0, category: "Horse Care", emoji: "🧴", brand: "Farnam", inventory: 40, pick: false, description: "Deep-cleaning protein-enriched shampoo with coat conditioners." },
+  { name: "Back on Track Mesh Sheet", price: 249.0, shipping: 0, category: "Horse Care", emoji: "🐎", brand: "Back on Track", inventory: 6, pick: true, description: "Welltex ceramic therapy sheet for sore backs and recovery." },
+  { name: "Cashel Quiet Ride Fly Mask", price: 24.95, shipping: 0, category: "Horse Care", emoji: "🪰", brand: "Cashel", inventory: 30, pick: false, description: "Ride-in fly mask — patented three-hole cap design, no gaps." },
+  { name: "Ariat Terrain Boots — Women's", price: 119.95, shipping: 0, category: "Apparel & Boots", emoji: "👢", brand: "Ariat", inventory: 15, pick: true, description: "The do-everything barn boot. Waterproof full-grain leather." },
+  { name: "Kerrits Ice Fil Long Sleeve — M", price: 59.0, shipping: 0, category: "Apparel & Boots", emoji: "🧥", brand: "Kerrits", inventory: 20, pick: false, description: "UPF 30+ cooling riding shirt for hot-weather schooling." },
+  { name: "Little Giant Muck Cart", price: 289.99, shipping: 35, category: "Barn & Stable", emoji: "🛠️", brand: "Little Giant", inventory: 4, pick: false, description: "700lb-capacity poly muck cart with pneumatic tires." },
+  { name: "Stall Mats — 4x6 Rubber (each)", price: 49.99, shipping: 15, category: "Barn & Stable", emoji: "🧱", inventory: 60, pick: false, description: "3/4in recycled rubber stall mat. Sold per mat." },
+  { name: "Redmond Rock Crushed Loose Mineral Salt — 25lb", price: 32.99, shipping: 0, category: "Feed & Supplements", emoji: "🧂", brand: "Redmond", inventory: 35, pick: true, description: "Unrefined sea salt with 60+ trace minerals. Top-dress daily." },
+  { name: "BarnBound Trucker Cap", price: 24.0, shipping: 0, category: "Gifts & Lifestyle", emoji: "🧢", brand: "BarnBound", inventory: 100, pick: true, description: "Rep the herd. Embroidered logo, snapback, one size." },
+];
+
 const DEMO_SELLERS = [
   { email: "sage@barnbound.test", name: "Sage Whitfield", location: "Fort Collins, CO", role: "MERCHANT" as const },
   { email: "cody@barnbound.test", name: "Cody Marsh", location: "Loveland, CO", role: "TRAINER" as const },
@@ -115,6 +135,36 @@ async function main() {
     });
   }
   console.log(`Seeded ${LISTINGS.length} listings.`);
+
+  // 3b) Shop — admin curator + drop-ship products under the merchant (Sage).
+  // Products seed only when empty so reseeding never clobbers carts/orders.
+  await prisma.user.upsert({
+    where: { email: "admin@barnbound.test" },
+    update: { role: "ADMIN" },
+    create: { email: "admin@barnbound.test", name: "BarnBound Admin", location: "Fort Collins, CO", role: "ADMIN", passwordHash },
+  });
+  console.log("Seeded admin account (admin@barnbound.test, password: password123).");
+
+  if ((await prisma.product.count()) === 0) {
+    const merchant = sellers[0]; // Sage — the MERCHANT demo account
+    for (const p of PRODUCTS) {
+      await prisma.product.create({
+        data: {
+          name: p.name,
+          description: p.description,
+          priceCents: Math.round(p.price * 100),
+          shippingCents: Math.round(p.shipping * 100),
+          category: p.category,
+          brand: p.brand ?? null,
+          inventory: p.inventory,
+          emoji: p.emoji,
+          pick: p.pick,
+          sellerId: merchant.id,
+        },
+      });
+    }
+    console.log(`Seeded ${PRODUCTS.length} shop products.`);
+  }
 
   // 4) Community — seed only when empty so we never clobber user-created content.
   if ((await prisma.group.count()) === 0) {

@@ -1,5 +1,7 @@
 // Map Prisma rows to the shape the frontend consumes (cents -> dollars, etc).
-import type { Listing, User, Business, Order, Inquiry } from "@/generated/prisma/client";
+import type {
+  Listing, User, Business, Order, Inquiry, Product, CartItem, ShopOrder, ShopOrderItem,
+} from "@/generated/prisma/client";
 
 type ListingWithSeller = Listing & { seller?: Pick<User, "id" | "name"> | null };
 
@@ -96,5 +98,88 @@ export function receivedInquiryDTO(
     message: i.message,
     createdAt: i.createdAt,
     buyer: i.buyer ? { name: i.buyer.name, email: i.buyer.email } : null,
+  };
+}
+
+// ---------- Shop (Phase 4) ----------
+
+type ProductWithSeller = Product & { seller?: Pick<User, "id" | "name"> | null };
+
+export function productDTO(p: ProductWithSeller) {
+  return {
+    id: p.id,
+    name: p.name,
+    description: p.description,
+    price: p.priceCents / 100,
+    shipping: p.shippingCents / 100,
+    emoji: p.emoji,
+    category: p.category,
+    brand: p.brand,
+    inventory: p.inventory,
+    pick: p.pick,
+    status: p.status,
+    sellerId: p.sellerId,
+    seller: p.seller?.name ?? null,
+    createdAt: p.createdAt,
+  };
+}
+
+export function cartItemDTO(c: CartItem & { product: ProductWithSeller }) {
+  return {
+    id: c.id,
+    qty: c.qty,
+    product: productDTO(c.product),
+  };
+}
+
+type ItemWithSeller = ShopOrderItem & { seller?: Pick<User, "id" | "name"> | null };
+
+export function shopOrderItemDTO(i: ItemWithSeller) {
+  return {
+    id: i.id,
+    productId: i.productId,
+    name: i.nameSnapshot,
+    price: i.priceCentsSnap / 100,
+    qty: i.qty,
+    fulfillmentStatus: i.fulfillmentStatus,
+    seller: i.seller?.name ?? null,
+  };
+}
+
+export function shopOrderDTO(o: ShopOrder & { items: ItemWithSeller[] }) {
+  return {
+    id: o.id,
+    subtotal: o.subtotalCents / 100,
+    shipping: o.shippingCents / 100,
+    total: o.totalCents / 100,
+    status: o.status,
+    paymentProvider: o.paymentProvider,
+    paymentRef: o.paymentRef,
+    shipName: o.shipName,
+    shipAddress: o.shipAddress,
+    shipCity: o.shipCity,
+    shipState: o.shipState,
+    shipZip: o.shipZip,
+    createdAt: o.createdAt,
+    items: o.items.map(shopOrderItemDTO),
+  };
+}
+
+// Seller-side fulfillment view: which order, where to ship, who bought.
+export function fulfillmentDTO(
+  i: ShopOrderItem & { order: ShopOrder & { buyer: Pick<User, "name"> } },
+) {
+  return {
+    id: i.id,
+    orderId: i.orderId,
+    name: i.nameSnapshot,
+    price: i.priceCentsSnap / 100,
+    qty: i.qty,
+    commission: i.commissionCents / 100,
+    sellerNet: (i.priceCentsSnap * i.qty - i.commissionCents) / 100,
+    fulfillmentStatus: i.fulfillmentStatus,
+    createdAt: i.createdAt,
+    buyer: i.order.buyer.name,
+    shipTo: `${i.order.shipName}, ${i.order.shipAddress}, ${i.order.shipCity}, ${i.order.shipState} ${i.order.shipZip}`,
   };
 }

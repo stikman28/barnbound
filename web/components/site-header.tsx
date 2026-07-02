@@ -9,6 +9,7 @@ import { apiPost } from "@/lib/client";
 const NAV = [
   { href: "/", label: "Home" },
   { href: "/marketplace", label: "Marketplace" },
+  { href: "/shop", label: "Shop" },
   { href: "/directory", label: "Directory" },
   { href: "/community", label: "Community" },
   { href: "/map", label: "Map" },
@@ -82,6 +83,8 @@ function UserMenu() {
           <Link href="/dashboard" className="user-dropdown-item">My Dashboard</Link>
           <Link href="/messages" className="user-dropdown-item">Messages</Link>
           <Link href="/marketplace" className="user-dropdown-item">Buy &amp; Sell</Link>
+          <Link href="/cart" className="user-dropdown-item">My Cart</Link>
+          <Link href="/orders" className="user-dropdown-item">Shop Orders</Link>
           <Link href="/business/new" className="user-dropdown-item">List Your Business</Link>
           <button type="button" className="user-dropdown-item danger" onClick={signOut}>
             Sign Out
