@@ -4,6 +4,7 @@ import { getCurrentUser, unverifiedResponse } from "@/lib/auth";
 import { listingSchema, LISTING_TYPES } from "@/lib/validation";
 import { ok, bad, unauthorized } from "@/lib/http";
 import { listingDTO } from "@/lib/serialize";
+import { overVelocityCap, velocityResponse } from "@/lib/audit";
 
 const TYPE_EMOJI: Record<string, string> = {
   HORSE: "🐎", TACK: "🤠", EQUIPMENT: "🛠️", TRAILER: "🚛", CLOTHING: "🧥", OTHER: "📦",
@@ -60,6 +61,7 @@ export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!user) return unauthorized();
   if (!user.emailVerified) return unverifiedResponse();
+  if (await overVelocityCap(user.id, "listings")) return velocityResponse("new listings");
 
   const body = await req.json().catch(() => null);
   const parsed = listingSchema.safeParse(body);

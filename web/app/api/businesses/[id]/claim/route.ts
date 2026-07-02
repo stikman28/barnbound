@@ -3,6 +3,7 @@ import { getCurrentUser, unverifiedResponse } from "@/lib/auth";
 import { claimRequestSchema } from "@/lib/validation";
 import { ok, bad, unauthorized, notFound } from "@/lib/http";
 import { rateLimit } from "@/lib/rate-limit";
+import { audit } from "@/lib/audit";
 
 // POST /api/businesses/:id/claim — request to claim an unclaimed business.
 // Claims are no longer instant (first-come claiming let anyone impersonate a
@@ -39,5 +40,6 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     update: { proof: parsed.data.proof, status: "PENDING" },
     create: { businessId: num, userId: user.id, proof: parsed.data.proof },
   });
+  audit(user.id, "CLAIM_REQUESTED", `business ${num}: ${parsed.data.proof.slice(0, 120)}`);
   return ok({ pending: true }, 201);
 }

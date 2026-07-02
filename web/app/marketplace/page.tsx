@@ -100,6 +100,16 @@ export default function MarketplacePage() {
     return false;
   }
 
+  async function report(l: Listing) {
+    if (!requireAuth()) return;
+    const reason = window.prompt(`Report "${l.title}" — what's wrong? (scam, misleading, prohibited item…)`);
+    if (!reason) return;
+    try {
+      await apiPost("/api/reports", { targetType: "LISTING", targetId: l.id, reason });
+      showToast("Thanks — our team will review this listing.");
+    } catch (e) { showToast((e as Error).message); }
+  }
+
   async function toggleFav(l: Listing) {
     if (!requireAuth()) return;
     try {
@@ -256,6 +266,10 @@ export default function MarketplacePage() {
                       <div className="card-footer">
                         <span className="chip">{l.verified ? "✓ Verified Seller" : "Unverified"}</span>
                         {l.seller ? <span className="muted small">{l.seller}</span> : null}
+                        {!mine ? (
+                          <button className="btn btn-ghost btn-sm" title="Report this listing" aria-label="Report listing"
+                            style={{ marginLeft: "auto", padding: "0 0.4rem" }} onClick={() => report(l)}>⚑</button>
+                        ) : null}
                       </div>
                       <div className="card-actions">
                         <button className="btn btn-ghost btn-sm" onClick={() => openDeal(l, "contact")}>Contact</button>

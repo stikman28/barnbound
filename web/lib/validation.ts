@@ -30,6 +30,19 @@ export const claimDecisionSchema = z.object({
   action: z.enum(["APPROVE", "REJECT"]),
 });
 
+export const REPORT_TARGETS = ["LISTING", "PRODUCT", "BUSINESS", "THREAD", "USER"] as const;
+
+export const reportSchema = z.object({
+  targetType: z.enum(REPORT_TARGETS),
+  targetId: z.string().min(1),
+  reason: z.string().trim().min(5, "Tell us what's wrong (a sentence is plenty).").max(1000),
+});
+
+export const reportDecisionSchema = z.object({
+  action: z.enum(["RESOLVE", "DISMISS"]),
+  removeContent: z.boolean().optional(), // RESOLVE only: pull the listing/product
+});
+
 export const listingSchema = z.object({
   type: z.enum(LISTING_TYPES),
   title: z.string().trim().min(3, "Give your listing a title."),

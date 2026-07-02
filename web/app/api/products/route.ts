@@ -4,6 +4,7 @@ import { getCurrentUser, unverifiedResponse } from "@/lib/auth";
 import { productSchema } from "@/lib/validation";
 import { ok, bad, unauthorized } from "@/lib/http";
 import { productDTO } from "@/lib/serialize";
+import { overVelocityCap, velocityResponse } from "@/lib/audit";
 
 // GET /api/products — public shop catalog with filters/sort.
 export async function GET(req: Request) {
@@ -47,6 +48,7 @@ export async function POST(req: Request) {
   if (user.role !== "MERCHANT" && user.role !== "ADMIN") {
     return bad("Only merchant accounts can add shop products.", 403);
   }
+  if (await overVelocityCap(user.id, "products")) return velocityResponse("new products");
 
   const body = await req.json().catch(() => null);
   const parsed = productSchema.safeParse(body);

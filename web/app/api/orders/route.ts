@@ -3,6 +3,7 @@ import { getCurrentUser, unverifiedResponse } from "@/lib/auth";
 import { orderSchema } from "@/lib/validation";
 import { ok, bad, unauthorized, notFound } from "@/lib/http";
 import { orderDTO } from "@/lib/serialize";
+import { overVelocityCap, velocityResponse } from "@/lib/audit";
 
 // GET /api/orders — offers/purchase requests the user has sent.
 export async function GET() {
@@ -21,6 +22,7 @@ export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!user) return unauthorized();
   if (!user.emailVerified) return unverifiedResponse();
+  if (await overVelocityCap(user.id, "orders")) return velocityResponse("offers");
   const body = await req.json().catch(() => null);
   const parsed = orderSchema.safeParse(body);
   if (!parsed.success) return bad(parsed.error.issues[0]?.message ?? "Invalid input.");

@@ -5,6 +5,7 @@ import { ok, bad } from "@/lib/http";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { makeVerifyCode, sendVerifyCode } from "@/lib/mail";
+import { audit } from "@/lib/audit";
 
 export async function POST(req: Request) {
   const ip = clientIp(req);
@@ -39,6 +40,7 @@ export async function POST(req: Request) {
     select: { id: true, email: true, name: true, location: true, role: true, emailVerified: true },
   });
   await sendVerifyCode(email, code);
+  audit(user.id, "USER_REGISTERED", `${email} (${user.role})`, ip);
 
   await createSession(user.id);
   return ok({ user }, 201);

@@ -3,6 +3,8 @@ import { getCurrentUser, unverifiedResponse } from "@/lib/auth";
 import { checkoutSchema } from "@/lib/validation";
 import { ok, bad, unauthorized } from "@/lib/http";
 import { shopOrderDTO } from "@/lib/serialize";
+import { audit, overVelocityCap, velocityResponse } from "@/lib/audit";
+import { clientIp } from "@/lib/rate-limit";
 
 // Platform commission on drop-ship sales (basis for future seller payouts).
 const COMMISSION_RATE = 0.1;
@@ -14,6 +16,7 @@ export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!user) return unauthorized();
   if (!user.emailVerified) return unverifiedResponse();
+  if (await overVelocityCap(user.id, "shopOrders")) return velocityResponse("orders");
 
   const body = await req.json().catch(() => null);
   const parsed = checkoutSchema.safeParse(body);
@@ -72,6 +75,7 @@ export async function POST(req: Request) {
 
       return created;
     });
+    audit(user.id, "CHECKOUT", `order ${order.paymentRef} — $${(order.totalCents / 100).toFixed(2)}`, clientIp(req));
     return ok({ order: shopOrderDTO(order) }, 201);
   } catch (e) {
     return bad((e as Error).message || "Checkout failed.");

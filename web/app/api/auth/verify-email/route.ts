@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { verifyEmailSchema } from "@/lib/validation";
 import { ok, bad, unauthorized } from "@/lib/http";
 import { rateLimit } from "@/lib/rate-limit";
+import { audit } from "@/lib/audit";
 
 // POST /api/auth/verify-email — confirm the 6-digit code.
 export async function POST(req: Request) {
@@ -35,5 +36,6 @@ export async function POST(req: Request) {
     // The "Verified Seller" badge is earned: verifying flips your listings on.
     prisma.listing.updateMany({ where: { sellerId: user.id }, data: { verified: true } }),
   ]);
+  audit(user.id, "USER_VERIFIED", user.email);
   return ok({ verified: true });
 }

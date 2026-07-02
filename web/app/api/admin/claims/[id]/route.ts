@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { claimDecisionSchema } from "@/lib/validation";
 import { ok, bad, unauthorized, notFound } from "@/lib/http";
+import { audit } from "@/lib/audit";
 
 // PATCH /api/admin/claims/:id — approve or reject a claim (admin only).
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -23,6 +24,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
 
   if (parsed.data.action === "REJECT") {
     await prisma.businessClaimRequest.update({ where: { id }, data: { status: "REJECTED" } });
+    audit(user.id, "CLAIM_REJECTED", `business ${claim.businessId}, claimant ${claim.userId}`);
     return ok({ status: "REJECTED" });
   }
 
@@ -36,5 +38,6 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
       data: { status: "REJECTED" },
     }),
   ]);
+  audit(user.id, "CLAIM_APPROVED", `business ${claim.businessId} → user ${claim.userId}`);
   return ok({ status: "APPROVED" });
 }

@@ -87,6 +87,16 @@ export default function ShopPage() {
     } catch (e) { showToast((e as Error).message); }
   }
 
+  async function report(p: Product) {
+    if (!requireAuth()) return;
+    const reason = window.prompt(`Report "${p.name}" — what's wrong? (counterfeit, misleading, prohibited…)`);
+    if (!reason) return;
+    try {
+      await apiPost("/api/reports", { targetType: "PRODUCT", targetId: p.id, reason });
+      showToast("Thanks — our team will review this product.");
+    } catch (e) { showToast((e as Error).message); }
+  }
+
   async function togglePick(p: Product) {
     try {
       await apiPatch(`/api/products/${p.id}`, { pick: !p.pick });
@@ -138,6 +148,10 @@ export default function ShopPage() {
           <div className="card-footer">
             <span className="chip">{out ? "Out of stock" : `${p.inventory} in stock`}</span>
             {p.seller ? <span className="muted small">Ships from {p.seller}</span> : null}
+            {user?.id !== p.sellerId ? (
+              <button className="btn btn-ghost btn-sm" title="Report this product" aria-label="Report product"
+                style={{ marginLeft: "auto", padding: "0 0.4rem" }} onClick={() => report(p)}>⚑</button>
+            ) : null}
           </div>
           <div className="card-actions">
             {isAdmin ? (

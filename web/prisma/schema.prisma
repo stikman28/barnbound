@@ -78,6 +78,47 @@ model User {
   shopOrders     ShopOrder[]     @relation("ShopBuyer")
   shopOrderItems ShopOrderItem[] @relation("ShopItemSeller")
   claimRequests  BusinessClaimRequest[]
+  reports        Report[]
+  auditEntries   AuditLog[]
+}
+
+// ---------- Trust & safety (Phase S Tier 2) ----------
+
+enum ReportStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
+// Community reporting: anything on the platform can be flagged for review.
+model Report {
+  id         String       @id @default(cuid())
+  targetType String // LISTING | PRODUCT | BUSINESS | THREAD | USER
+  targetId   String
+  reason     String
+  status     ReportStatus @default(OPEN)
+  createdAt  DateTime     @default(now())
+
+  reporter   User   @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  reporterId String
+
+  @@unique([targetType, targetId, reporterId])
+  @@index([status])
+}
+
+// Append-only trail of sensitive actions — who did what, from where.
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String // e.g. USER_VERIFIED, CHECKOUT, CLAIM_APPROVED, REPORT_RESOLVED
+  detail    String
+  ip        String?
+  createdAt DateTime @default(now())
+
+  actor   User?   @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  actorId String?
+
+  @@index([createdAt])
+  @@index([actorId])
 }
 
 // Claiming a directory business requires admin approval (Tier 1 security) —

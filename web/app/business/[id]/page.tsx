@@ -61,6 +61,16 @@ export default function BusinessProfilePage() {
     } catch (e) { showToast((e as Error).message); }
   }
 
+  async function report() {
+    if (!user) { router.push(`/signin?next=/business/${id}`); return; }
+    const reason = window.prompt("Report this business profile — what's wrong? (impersonation, misinformation…)");
+    if (!reason) return;
+    try {
+      await apiPost("/api/reports", { targetType: "BUSINESS", targetId: String(id), reason });
+      showToast("Thanks — our team will review this profile.");
+    } catch (e) { showToast((e as Error).message); }
+  }
+
   async function claim() {
     if (!user) { router.push(`/signin?next=/business/${id}`); return; }
     const proof = window.prompt(
@@ -106,6 +116,7 @@ export default function BusinessProfilePage() {
         <p style={{ fontSize: "1.05rem" }}>{business.description}</p>
         {business.tags.length > 0 && <div className="card-tags" style={{ margin: "0 0 1rem" }}>{business.tags.map((t) => <span className="chip" key={t}>{t}</span>)}</div>}
         {business.url && <p><a className="btn btn-outline" href={business.url} target="_blank" rel="noopener">Visit website ↗</a></p>}
+        {!isOwner && <p><button className="btn btn-ghost btn-sm" onClick={report}>⚑ Report this profile</button></p>}
 
         {/* Claim prompt */}
         {!business.claimed && !isOwner && (
