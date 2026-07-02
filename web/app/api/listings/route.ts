@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, unverifiedResponse } from "@/lib/auth";
 import { listingSchema, LISTING_TYPES } from "@/lib/validation";
 import { ok, bad, unauthorized } from "@/lib/http";
 import { listingDTO } from "@/lib/serialize";
@@ -59,6 +59,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!user) return unauthorized();
+  if (!user.emailVerified) return unverifiedResponse();
 
   const body = await req.json().catch(() => null);
   const parsed = listingSchema.safeParse(body);
@@ -78,7 +79,9 @@ export async function POST(req: Request) {
       discipline: isHorse ? d.discipline || null : null,
       age: isHorse ? d.age ?? null : null,
       category: isHorse ? null : d.category || d.type,
-      verified: true,
+      // Earned badge: listing is "verified" because its seller verified their
+      // email (creation requires it). ID-verified sellers come in Tier 3.
+      verified: Boolean(user.emailVerified),
       featured: false,
       sellerId: user.id,
     },

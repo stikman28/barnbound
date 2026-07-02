@@ -9,6 +9,7 @@ export type User = {
   name: string;
   location: string | null;
   role: string;
+  emailVerified: string | null;
 } | null;
 
 type Ctx = {

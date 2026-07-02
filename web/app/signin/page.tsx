@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useUser } from "@/components/user-context";
 import { apiPost } from "@/lib/client";
 import type { User } from "@/components/user-context";
+import Turnstile from "@/components/turnstile";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   useEffect(() => {
     const n = new URLSearchParams(window.location.search).get("next");
@@ -28,7 +30,7 @@ export default function SignInPage() {
     e.preventDefault();
     setErr("");
     try {
-      const { user } = await apiPost<{ user: User }>("/api/auth/login", { email, password });
+      const { user } = await apiPost<{ user: User }>("/api/auth/login", { email, password, turnstileToken });
       setUser(user);
       router.push(next);
     } catch (ex) {
@@ -52,6 +54,7 @@ export default function SignInPage() {
             <input type="password" autoComplete="current-password" placeholder="••••••••"
               value={password} onChange={(e) => setPassword(e.target.value)} required />
           </label>
+          <Turnstile onToken={setTurnstileToken} />
           {err && <div className="form-error">{err}</div>}
           <button type="submit" className="btn btn-primary auth-submit">Sign In</button>
         </form>

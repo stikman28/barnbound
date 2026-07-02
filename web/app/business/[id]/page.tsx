@@ -63,8 +63,14 @@ export default function BusinessProfilePage() {
 
   async function claim() {
     if (!user) { router.push(`/signin?next=/business/${id}`); return; }
-    try { await apiPost(`/api/businesses/${id}/claim`); load(); showToast("You now manage this business."); }
-    catch (e) { showToast((e as Error).message); }
+    const proof = window.prompt(
+      "How are you connected to this business? Include something we can check — your work email, the business phone, or your name on the website.",
+    );
+    if (!proof) return;
+    try {
+      await apiPost(`/api/businesses/${id}/claim`, { proof });
+      showToast("Claim submitted — our team will review it and hand you the keys once confirmed.");
+    } catch (e) { showToast((e as Error).message); }
   }
 
   async function setPlan(plan: string) {
@@ -105,7 +111,7 @@ export default function BusinessProfilePage() {
         {!business.claimed && !isOwner && (
           <div className="deal-summary" style={{ marginTop: "1.5rem" }}>
             <strong>Is this your business?</strong>
-            <span className="muted small">Claim it to manage the profile, choose a plan, and get featured.</span>
+            <span className="muted small">Claim it to manage the profile, choose a plan, and get featured. Claims are reviewed by our team before approval.</span>
             <div style={{ marginTop: "0.5rem" }}><button className="btn btn-primary btn-sm" onClick={claim}>Claim this business</button></div>
           </div>
         )}

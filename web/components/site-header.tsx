@@ -79,6 +79,7 @@ function UserMenu() {
           <div className="user-dropdown-body">
             <span className="chip">{user.role}</span>
             {user.location ? <span className="chip">📍 {user.location}</span> : null}
+            {!user.emailVerified ? <Link href="/verify-email" className="chip" style={{ background: "#fdecea", color: "#b71c1c" }}>⚠ Verify email</Link> : null}
           </div>
           <Link href="/dashboard" className="user-dropdown-item">My Dashboard</Link>
           <Link href="/messages" className="user-dropdown-item">Messages</Link>
@@ -86,6 +87,7 @@ function UserMenu() {
           <Link href="/cart" className="user-dropdown-item">My Cart</Link>
           <Link href="/orders" className="user-dropdown-item">Shop Orders</Link>
           <Link href="/business/new" className="user-dropdown-item">List Your Business</Link>
+          {user.role === "ADMIN" ? <Link href="/admin" className="user-dropdown-item">Admin — Claims</Link> : null}
           <button type="button" className="user-dropdown-item danger" onClick={signOut}>
             Sign Out
           </button>

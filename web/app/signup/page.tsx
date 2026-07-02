@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useUser } from "@/components/user-context";
 import { apiPost } from "@/lib/client";
 import type { User } from "@/components/user-context";
+import Turnstile from "@/components/turnstile";
 
 const ROLES = [
   { value: "RIDER", label: "Rider / Owner" },
@@ -21,6 +22,7 @@ export default function SignUpPage() {
   const [form, setForm] = useState({ name: "", email: "", password: "", location: "", role: "RIDER" });
   const [terms, setTerms] = useState(false);
   const [err, setErr] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   useEffect(() => {
     const n = new URLSearchParams(window.location.search).get("next");
@@ -28,18 +30,19 @@ export default function SignUpPage() {
   }, []);
 
   useEffect(() => {
-    if (user) router.replace(next);
+    if (!user) return;
+    router.replace(user.emailVerified ? next : "/verify-email");
   }, [user, next, router]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
     if (!terms) { setErr("Please agree to the Terms to continue."); return; }
-    if (form.password.length < 6) { setErr("Password must be at least 6 characters."); return; }
+    if (form.password.length < 8) { setErr("Password must be at least 8 characters."); return; }
     try {
-      const { user } = await apiPost<{ user: User }>("/api/auth/register", form);
+      const { user } = await apiPost<{ user: User }>("/api/auth/register", { ...form, turnstileToken });
       setUser(user);
-      router.push(next);
+      router.push("/verify-email");
     } catch (ex) {
       setErr((ex as Error).message);
     }
@@ -64,7 +67,7 @@ export default function SignUpPage() {
           </label>
           <label>
             Password
-            <input type="password" autoComplete="new-password" placeholder="At least 6 characters" value={form.password} onChange={set("password")} required />
+            <input type="password" autoComplete="new-password" placeholder="At least 8 characters" value={form.password} onChange={set("password")} required />
           </label>
           <label>
             Location (optional)
@@ -79,6 +82,7 @@ export default function SignUpPage() {
           <label className="auth-terms">
             <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} /> I agree to the Terms &amp; Privacy Policy.
           </label>
+          <Turnstile onToken={setTurnstileToken} />
           {err && <div className="form-error">{err}</div>}
           <button type="submit" className="btn btn-primary auth-submit">Create Account</button>
         </form>

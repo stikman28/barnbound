@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, unverifiedResponse } from "@/lib/auth";
 import { checkoutSchema } from "@/lib/validation";
 import { ok, bad, unauthorized } from "@/lib/http";
 import { shopOrderDTO } from "@/lib/serialize";
@@ -13,6 +13,7 @@ const COMMISSION_RATE = 0.1;
 export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!user) return unauthorized();
+  if (!user.emailVerified) return unverifiedResponse();
 
   const body = await req.json().catch(() => null);
   const parsed = checkoutSchema.safeParse(body);

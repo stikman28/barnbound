@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, unverifiedResponse } from "@/lib/auth";
 import { productSchema } from "@/lib/validation";
 import { ok, bad, unauthorized } from "@/lib/http";
 import { productDTO } from "@/lib/serialize";
@@ -43,6 +43,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!user) return unauthorized();
+  if (!user.emailVerified) return unverifiedResponse();
   if (user.role !== "MERCHANT" && user.role !== "ADMIN") {
     return bad("Only merchant accounts can add shop products.", 403);
   }

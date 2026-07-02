@@ -62,6 +62,7 @@ export type SafeUser = {
   name: string;
   location: string | null;
   role: string;
+  emailVerified: Date | null;
 };
 
 export async function getCurrentUser(): Promise<SafeUser | null> {
@@ -69,7 +70,15 @@ export async function getCurrentUser(): Promise<SafeUser | null> {
   if (!uid) return null;
   const user = await prisma.user.findUnique({
     where: { id: uid },
-    select: { id: true, email: true, name: true, location: true, role: true },
+    select: { id: true, email: true, name: true, location: true, role: true, emailVerified: true },
   });
   return user;
+}
+
+/** Standard 403 for write actions that require a verified email. */
+export function unverifiedResponse() {
+  return Response.json(
+    { error: "Please verify your email first — check your inbox for the 6-digit code.", unverified: true },
+    { status: 403 },
+  );
 }

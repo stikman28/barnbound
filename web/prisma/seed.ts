@@ -99,12 +99,13 @@ async function main() {
 
   // 2) Demo sellers — shared password "password123".
   const passwordHash = await bcrypt.hash("password123", 10);
+  const verifiedAt = new Date(); // demo accounts skip email verification
   const sellers = [];
   for (const s of DEMO_SELLERS) {
     const user = await prisma.user.upsert({
       where: { email: s.email },
-      update: { name: s.name, location: s.location, role: s.role },
-      create: { ...s, passwordHash },
+      update: { name: s.name, location: s.location, role: s.role, emailVerified: verifiedAt },
+      create: { ...s, passwordHash, emailVerified: verifiedAt },
     });
     sellers.push(user);
   }
@@ -140,8 +141,8 @@ async function main() {
   // Products seed only when empty so reseeding never clobbers carts/orders.
   await prisma.user.upsert({
     where: { email: "admin@barnbound.test" },
-    update: { role: "ADMIN" },
-    create: { email: "admin@barnbound.test", name: "BarnBound Admin", location: "Fort Collins, CO", role: "ADMIN", passwordHash },
+    update: { role: "ADMIN", emailVerified: verifiedAt },
+    create: { email: "admin@barnbound.test", name: "BarnBound Admin", location: "Fort Collins, CO", role: "ADMIN", passwordHash, emailVerified: verifiedAt },
   });
   console.log("Seeded admin account (admin@barnbound.test, password: password123).");
 

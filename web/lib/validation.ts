@@ -6,14 +6,28 @@ export const LISTING_TYPES = ["HORSE", "TACK", "EQUIPMENT", "TRAILER", "CLOTHING
 export const registerSchema = z.object({
   name: z.string().trim().min(1, "Name is required."),
   email: z.string().trim().toLowerCase().email("Enter a valid email."),
-  password: z.string().min(6, "Password must be at least 6 characters."),
+  password: z.string().min(8, "Password must be at least 8 characters."),
   location: z.string().trim().optional(),
-  role: z.enum(ROLES).optional(),
+  role: z.enum(ROLES).optional(), // ROLES excludes ADMIN — admin is never self-service
+  turnstileToken: z.string().optional(),
 });
 
 export const loginSchema = z.object({
   email: z.string().trim().toLowerCase().email("Enter a valid email."),
   password: z.string().min(1, "Password is required."),
+  turnstileToken: z.string().optional(),
+});
+
+export const verifyEmailSchema = z.object({
+  code: z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code."),
+});
+
+export const claimRequestSchema = z.object({
+  proof: z.string().trim().min(10, "Tell us how you're connected to this business (website, work email, phone…)."),
+});
+
+export const claimDecisionSchema = z.object({
+  action: z.enum(["APPROVE", "REJECT"]),
 });
 
 export const listingSchema = z.object({

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, unverifiedResponse } from "@/lib/auth";
 import { messageSchema } from "@/lib/validation";
 import { ok, bad, unauthorized, notFound } from "@/lib/http";
 
@@ -7,6 +7,7 @@ import { ok, bad, unauthorized, notFound } from "@/lib/http";
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const user = await getCurrentUser();
   if (!user) return unauthorized();
+  if (!user.emailVerified) return unverifiedResponse();
 
   const { id } = await ctx.params;
   const body = await req.json().catch(() => null);

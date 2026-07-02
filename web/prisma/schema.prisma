@@ -50,6 +50,12 @@ model User {
   role         Role       @default(RIDER)
   createdAt    DateTime   @default(now())
 
+  // Email verification (Tier 1 security): 6-digit code, short-lived.
+  // Unverified accounts can browse but not list, sell, buy, or message.
+  emailVerified    DateTime?
+  verifyCode       String?
+  verifyCodeExpiry DateTime?
+
   listings     Listing[]
   orders       Order[]
   inquiries    Inquiry[]
@@ -71,6 +77,30 @@ model User {
   cartItems      CartItem[]
   shopOrders     ShopOrder[]     @relation("ShopBuyer")
   shopOrderItems ShopOrderItem[] @relation("ShopItemSeller")
+  claimRequests  BusinessClaimRequest[]
+}
+
+// Claiming a directory business requires admin approval (Tier 1 security) —
+// instant first-come claims were an impersonation/defacement vector.
+enum ClaimStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model BusinessClaimRequest {
+  id        String      @id @default(cuid())
+  proof     String // how the claimant proves ownership (site, email domain, phone…)
+  status    ClaimStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+
+  @@unique([businessId, userId])
+  @@index([status])
 }
 
 enum BusinessPlan {
@@ -101,6 +131,8 @@ model Business {
 
   owner        User?    @relation("BusinessOwner", fields: [ownerId], references: [id], onDelete: SetNull)
   ownerId      String?
+
+  claimRequests BusinessClaimRequest[]
 
   @@index([ownerId])
 }

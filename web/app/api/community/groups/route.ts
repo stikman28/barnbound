@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, unverifiedResponse } from "@/lib/auth";
 import { groupSchema } from "@/lib/validation";
 import { ok, bad, unauthorized } from "@/lib/http";
 
@@ -29,6 +29,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!user) return unauthorized();
+  if (!user.emailVerified) return unverifiedResponse();
   const body = await req.json().catch(() => null);
   const parsed = groupSchema.safeParse(body);
   if (!parsed.success) return bad(parsed.error.issues[0]?.message ?? "Invalid input.");
