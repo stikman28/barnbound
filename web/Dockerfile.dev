@@ -2,7 +2,7 @@
 # Source is bind-mounted by docker-compose; this image just provides
 # Node + an installed node_modules layer. Prisma client (engine-less,
 # pure TS) and migrations are generated/applied at container start.
-FROM node:22-slim
+FROM node:25-slim
 
 # Prisma CLI (generate/migrate) probes for OpenSSL; install it to keep logs clean.
 RUN apt-get update -y && apt-get install -y --no-install-recommends openssl \
